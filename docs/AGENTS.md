@@ -53,6 +53,19 @@ Raw base URL for expanded docs:
 
 ---
 
+## Session triggers
+
+Use these commands in any AI chat session to start a specific workflow:
+
+| Command | What it does | Full procedure |
+|---|---|---|
+| `review pr <N>` | Perform an initial code review: read every changed file, check against §5–§11, submit findings via the GitHub reviews API with inline comments. | `docs/code-review-guide.md` |
+| `respond pr review <N>` | Respond to an existing Copilot review: gather all threads, triage each one (✅ / ❌ / ⚠️ / ⏸️), fix valid issues in one batch commit, post follow-up replies with the commit SHA. | `docs/pr-review-workflow.md` |
+
+These two commands are distinct. `review pr <N>` makes you the reviewer. `respond pr review <N>` makes you the branch owner's assistant working through Copilot's threads.
+
+---
+
 ## Table of Contents
 
 1. [AI Collaboration Protocol](#1-ai-collaboration-protocol)
@@ -231,6 +244,38 @@ gh pr view <N> --json reviewRequests --jq '.reviewRequests[].login'
 If not, add it via the GitHub UI: **PR → Reviewers → Request → Copilot**.
 
 Do not proceed to Phase 2 until the review is submitted and threads are visible.
+
+---
+
+### Post-review — always post findings to the PR
+
+After completing a review session, submit findings via the GitHub pull request reviews API — the same mechanism Copilot uses:
+
+```sh
+COMMIT=$(gh pr view <N> --repo <owner>/<repo> --json headRefOid --jq '.headRefOid')
+gh api --method POST /repos/<owner>/<repo>/pulls/<N>/reviews \
+  --input - <<EOF
+{
+  "commit_id": "$COMMIT",
+  "event": "COMMENT",
+  "body": "<overall verdict + general notes + footnote>",
+  "comments": [{ "path": "<file>", "line": <N>, "side": "RIGHT", "body": "<finding>" }]
+}
+EOF
+```
+
+- Line-specific findings → `comments[]` inline on the exact file and line
+- General notes, overall verdict, footnote → `body`
+- Always `event: "COMMENT"` — never approve or request changes unilaterally
+- Required even when there are no findings — submit with an empty `comments` array
+
+Every review body must close with:
+```
+---
+*Review by <GitHub username> · in collaboration with <model name>*
+```
+
+All file types are in scope — scripts, configuration files, stylesheets, and content files, not just component source files. See `docs/pr-review-workflow.md` for full detail.
 
 ---
 
