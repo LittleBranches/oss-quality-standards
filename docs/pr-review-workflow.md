@@ -271,6 +271,35 @@ Include the short commit SHA (7 characters). The branch owner can click it to ve
 
 ---
 
+## Edge cases
+
+### Thread reply returns 404
+
+If `POST .../pulls/comments/<id>/replies` returns a 404, do **not** silently fall back to a top-level PR comment. Stop and flag it to the branch owner first:
+
+```
+⚠️ Thread reply API returned 404 for comment <id> on <file>:<line>. This usually means the
+comment belongs to an org where the reply endpoint is restricted, or the comment was deleted.
+I cannot reply inline. Flagging here so you are aware — I will post a top-level PR comment
+that references each thread explicitly, unless you prefer a different approach.
+```
+
+Only after flagging may you fall back to `gh pr comment`, and only if the branch owner does not object. The fallback comment must identify each thread by file and line so the branch owner can map responses back to the original findings.
+
+### Thread has no line reference (top-level PR comment)
+
+Top-level PR comments (not attached to a file line) still need a response. Reply directly on the PR:
+
+```sh
+gh pr comment <N> --body "<response>"
+```
+
+### Copilot review failed or was not submitted
+
+If Copilot encountered an error and no review threads exist, note this to the branch owner and ask whether to re-request the review or proceed with a manual `review pr <N>` pass instead.
+
+---
+
 ## Phase 4 — Post-fix state
 
 ### 4.1 — Leave threads UNRESOLVED
