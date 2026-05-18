@@ -218,9 +218,14 @@ an orphaned single-suggestion commit in the branch history.
 
 ### 2.6 — Deferred comments: valid but out of scope for this PR
 
+> If the deferred comment arrived as a GitHub Suggested Change block (§2.5), reject it in the
+> thread and open a tracking issue here rather than leaving an unresolved suggestion.
+
 Some valid reviewer comments flag work that cannot be done in the current PR — the change is
 premature (stubs without implementations to validate against), out of scope (a different concern
-than the branch's stated purpose), or blocked by another open PR. These must **not** be left as
+than the branch's stated purpose), or blocked by another open PR. When work is blocked by another
+PR, include that PR's number in the tracking issue — it surfaces as a cross-reference and makes
+the deferred work easy to pick up once the blocker merges. These must **not** be left as
 unresolved thread replies — acknowledgement text in a comment gets lost when the PR closes.
 
 **Rule: always open a GitHub Issue for deferred work, then link to it from the thread.**
@@ -229,8 +234,23 @@ unresolved thread replies — acknowledgement text in a comment gets lost when t
 
 ```sh
 gh issue create \
-  --title "feat/fix/chore: <concise description of the deferred work>" \
-  --body "## Context\n\nDeferred from PR #<N>.\n\n[Why this cannot be done in this PR.]\n\n## Action\n\n[Concrete steps to complete the work when the time comes.]\n\n## Related\n\n- PR #<N>: <url>"
+  --title "<type>: <concise description of the deferred work>" \
+  --body "$(cat <<'EOF'
+## Context
+
+Deferred from PR #<N>.
+
+[Why this cannot be done in this PR.]
+
+## Action
+
+[Concrete steps to complete the work when the time comes.]
+
+## Related
+
+- PR #<N>: <url>
+EOF
+)"
 ```
 
 **Step 2 — Reply in the thread:**
@@ -239,6 +259,9 @@ gh issue create \
 ⏭️ Valid but deferred. [One sentence explaining why this cannot be done in this PR.]
 Tracked in #<issue-number>.
 ```
+
+The thread stays **unresolved** until the branch owner in Phase 5 confirms the issue was opened
+and the link is present.
 
 This keeps the PR thread self-documenting (one line, clickable issue reference) and moves
 the full rationale to an Issue that is:
