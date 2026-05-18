@@ -16,11 +16,11 @@ The DoD checklist lives in `.github/pull_request_template.md` and appears in eve
 
 **N/A is not a free pass.** It requires a reason:
 
-| Item | Valid N/A | Invalid N/A |
-|---|---|---|
-| "Storybook build green" | "This repo has no Storybook" | "Didn't have time" |
-| "Docs updated" | "This is an internal refactor with no public API change" | "Docs are someone else's job" |
-| "Tests added" | "This is a docs-only change" | "Will add tests in a follow-up" |
+| Item                    | Valid N/A                                                | Invalid N/A                     |
+| ----------------------- | -------------------------------------------------------- | ------------------------------- |
+| "Storybook build green" | "This repo has no Storybook"                             | "Didn't have time"              |
+| "Docs updated"          | "This is an internal refactor with no public API change" | "Docs are someone else's job"   |
+| "Tests added"           | "This is a docs-only change"                             | "Will add tests in a follow-up" |
 
 ---
 
@@ -66,14 +66,14 @@ The SHA must be the 7-character short SHA of the fix batch commit, not the branc
 
 These are the most common ways a PR gets to review without actually being done:
 
-| Symptom | Root cause |
-|---|---|
-| Gate passes locally, fails in CI | `npm run check` (with auto-fix) was run instead of `check:verify` |
-| Thread has no reply | AI fixed the issue silently without replying |
-| Multiple fix commits | AI pushed after each individual fix instead of batching |
-| PR description has empty sections | Created via GitHub UI instead of `gh pr create` |
-| Resolved threads | AI resolved its own threads |
-| `console.log` in diff | Forgot to clean up debug output |
+| Symptom                           | Root cause                                                        |
+| --------------------------------- | ----------------------------------------------------------------- |
+| Gate passes locally, fails in CI  | `npm run check` (with auto-fix) was run instead of `check:verify` |
+| Thread has no reply               | AI fixed the issue silently without replying                      |
+| Multiple fix commits              | AI pushed after each individual fix instead of batching           |
+| PR description has empty sections | Created via GitHub UI instead of `gh pr create`                   |
+| Resolved threads                  | AI resolved its own threads                                       |
+| `console.log` in diff             | Forgot to clean up debug output                                   |
 
 ---
 

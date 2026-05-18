@@ -31,14 +31,14 @@ Design the keyboard interaction before the mouse interaction. If you cannot tab 
 
 Mandatory keyboard bindings:
 
-| Element type | Keys that must work |
-|---|---|
-| Button / link | `Tab` to focus, `Enter` or `Space` to activate |
+| Element type      | Keys that must work                                                 |
+| ----------------- | ------------------------------------------------------------------- |
+| Button / link     | `Tab` to focus, `Enter` or `Space` to activate                      |
 | Select / combobox | `↑` / `↓` to navigate options, `Enter` to select, `Escape` to close |
-| Dialog | `Tab` cycles within dialog, `Escape` closes |
-| Tabs | `←` / `→` to switch tabs |
-| Tooltip | `Escape` to dismiss |
-| Menu | `↑` / `↓` to navigate, `Enter` to select, `Escape` to close |
+| Dialog            | `Tab` cycles within dialog, `Escape` closes                         |
+| Tabs              | `←` / `→` to switch tabs                                            |
+| Tooltip           | `Escape` to dismiss                                                 |
+| Menu              | `↑` / `↓` to navigate, `Enter` to select, `Escape` to close         |
 
 ### Focus trapping
 
@@ -74,23 +74,23 @@ MUI components apply `:focus-visible` focus rings by default. Only override when
 
 Native HTML elements carry implicit ARIA roles. Always prefer them over `<div>` + `role`:
 
-| Need | Use this | Not this |
-|---|---|---|
-| A clickable button | `<button>` | `<div role="button">` |
-| A navigation landmark | `<nav>` | `<div role="navigation">` |
-| A list | `<ul>` / `<li>` | `<div role="list">` |
-| A heading | `<h1>`–`<h6>` | `<div role="heading">` |
+| Need                  | Use this        | Not this                  |
+| --------------------- | --------------- | ------------------------- |
+| A clickable button    | `<button>`      | `<div role="button">`     |
+| A navigation landmark | `<nav>`         | `<div role="navigation">` |
+| A list                | `<ul>` / `<li>` | `<div role="list">`       |
+| A heading             | `<h1>`–`<h6>`   | `<div role="heading">`    |
 
 ### Required ARIA attributes
 
-| Pattern | Required attribute |
-|---|---|
-| Icon-only button | `aria-label` on the `<button>` |
-| Loading indicator | `aria-busy="true"` on the container, `aria-live="polite"` |
-| Error message | `aria-describedby` linking input to error |
-| Progress bar | `role="progressbar"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax` |
-| Toggle button | `aria-pressed` (true/false) |
-| Expandable region | `aria-expanded` on the trigger, `aria-controls` pointing to the region |
+| Pattern           | Required attribute                                                      |
+| ----------------- | ----------------------------------------------------------------------- |
+| Icon-only button  | `aria-label` on the `<button>`                                          |
+| Loading indicator | `aria-busy="true"` on the container, `aria-live="polite"`               |
+| Error message     | `aria-describedby` linking input to error                               |
+| Progress bar      | `role="progressbar"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax` |
+| Toggle button     | `aria-pressed` (true/false)                                             |
+| Expandable region | `aria-expanded` on the trigger, `aria-controls` pointing to the region  |
 
 ### Decorative vs informative icons
 

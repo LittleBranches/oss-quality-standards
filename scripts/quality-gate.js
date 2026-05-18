@@ -75,7 +75,7 @@ const bannedContentScript = path.join(appDir, 'scripts', 'check-banned-content.j
 if (existsSync(bannedContentScript)) {
   if (!run('Banned content scan', 'node scripts/check-banned-content.js', { fatal: false })) {
     failures.push(
-      'Banned content — prohibited identifier name or private reference found in docs/ or src/. See output above.'
+      'Banned content — prohibited identifier name or private reference found in docs/ or src/. See output above.',
     );
   }
 }
@@ -85,7 +85,7 @@ const structureScript = path.join(appDir, 'scripts', 'check-structure.js');
 if (existsSync(structureScript)) {
   if (!run('Structure check', 'node scripts/check-structure.js', { fatal: false })) {
     failures.push(
-      'Structure — flat component file(s) found under src/components/; move each into its own named subfolder.'
+      'Structure — flat component file(s) found under src/components/; move each into its own named subfolder.',
     );
   }
 }
@@ -105,7 +105,7 @@ if (FIX_MODE) {
 }
 if (!run('ESLint (--max-warnings 0)', 'npm run lint -- --max-warnings 0', { fatal: false })) {
   failures.push(
-    'ESLint — run `npm run lint:fix` to auto-fix, then fix remaining errors/warnings manually'
+    'ESLint — run `npm run lint:fix` to auto-fix, then fix remaining errors/warnings manually',
   );
 }
 

@@ -19,13 +19,13 @@ Load reviewer instructions from AGENTS.md in LittleBranches/oss-quality-standard
 
 ## What's included
 
-| File/folder | Purpose |
-|---|---|
-| `AGENTS.md` | The barrel file — the only file any AI needs to load |
-| `docs/` | Full Docusaurus documentation site |
-| `scripts/quality-gate.js` | Reusable quality gate runner |
-| `scripts/check-structure.js` | Component folder structure checker |
-| `.github/pull_request_template.md` | PR description template |
+| File/folder                        | Purpose                                              |
+| ---------------------------------- | ---------------------------------------------------- |
+| `AGENTS.md`                        | The barrel file — the only file any AI needs to load |
+| `docs/`                            | Full Docusaurus documentation site                   |
+| `scripts/quality-gate.js`          | Reusable quality gate runner                         |
+| `scripts/check-structure.js`       | Component folder structure checker                   |
+| `.github/pull_request_template.md` | PR description template                              |
 
 ## Documentation site
 
