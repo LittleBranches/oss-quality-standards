@@ -216,6 +216,41 @@ Accepted suggestions that are applied via the GitHub UI create a commit directly
 If this happens, squash that commit into the fix batch commit before pushing — do not leave
 an orphaned single-suggestion commit in the branch history.
 
+### 2.6 — Deferred comments: valid but out of scope for this PR
+
+Some valid reviewer comments flag work that cannot be done in the current PR — the change is
+premature (stubs without implementations to validate against), out of scope (a different concern
+than the branch's stated purpose), or blocked by another open PR. These must **not** be left as
+unresolved thread replies — acknowledgement text in a comment gets lost when the PR closes.
+
+**Rule: always open a GitHub Issue for deferred work, then link to it from the thread.**
+
+**Step 1 — Open the issue:**
+
+```sh
+gh issue create \
+  --title "feat/fix/chore: <concise description of the deferred work>" \
+  --body "## Context\n\nDeferred from PR #<N>.\n\n[Why this cannot be done in this PR.]\n\n## Action\n\n[Concrete steps to complete the work when the time comes.]\n\n## Related\n\n- PR #<N>: <url>"
+```
+
+**Step 2 — Reply in the thread:**
+
+```
+⏭️ Valid but deferred. [One sentence explaining why this cannot be done in this PR.]
+Tracked in #<issue-number>.
+```
+
+This keeps the PR thread self-documenting (one line, clickable issue reference) and moves
+the full rationale to an Issue that is:
+
+- **Searchable** and **linkable** from future PRs and roadmap entries.
+- **Closeable** — closing the issue is the natural completion signal.
+- **Visible in the backlog**, unlike acknowledgement text in a closed PR thread.
+
+**Deferred ≠ dismissed.** Never use "deferred" to avoid a valid critique. If the deferred
+work will genuinely never be done, use `❌ Won't fix` and explain why in the thread — do not
+open a tracking issue for work you are intentionally rejecting.
+
 ---
 
 ## Phase 3 — Fixing valid comments (one batch)
@@ -345,7 +380,7 @@ The branch owner:
 ```
 Phase 0  → branch hygiene + quality gate (before green light)
 Phase 1  → green light → create PR → trigger Copilot review
-Phase 2  → read ALL threads → respond one-by-one (✅ / ❌ / ⚠️ / ⏸️) → handle suggestion blocks
+Phase 2  → read ALL threads → respond one-by-one (✅ / ❌ / ⚠️ / ⏸️ / ⏭️) → handle suggestion blocks → open Issues for deferred work
 Phase 3  → fix all valid issues → quality gate → one batch commit → one push → follow-up replies (SHA)
 Phase 4  → threads stay UNRESOLVED → update PR description if scope changed
 Phase 5  → branch owner verifies, resolves, merges
