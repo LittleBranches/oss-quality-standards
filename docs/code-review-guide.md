@@ -16,7 +16,7 @@ sidebar_position: 4
 
 1. Run (or ask for the output of) `npm run check:verify`. If the gate is red, stop and flag it — a red gate is a blocker regardless of code quality.
 2. Read the PR description. Note the "What / Why / Type" to understand the intended change before looking at diffs.
-3. Read every changed file before commenting on any of them. Commenting file-by-file without the full picture leads to contradictory feedback.
+3. Read every changed file before commenting on any of them. Commenting file-by-file without the full picture leads to contradictory feedback. **All file types are in scope** — this includes scripts (`.js`, `.mjs`), configuration files (`tsconfig.json`, `docusaurus.config.ts`, `package.json`, `.gitignore`), stylesheets (`.css`, `.module.css`), and content files (`.md`, `.mdx`). Do not limit the review to component files.
 
 ---
 
@@ -202,6 +202,55 @@ Use the standard verdict prefixes from [AGENTS.md §4.2.2](./AGENTS.md#22--respo
 Each comment must reference the specific rule it enforces (e.g. "AGENTS.md §6.2 — sx array-safety") so the author can look it up rather than having to take your word for it.
 
 Leave a comment on every issue found, even minor ones — silence is ambiguous. If you have nothing to flag in a category, you do not need to comment on it.
+
+After completing the review, post findings using the GitHub pull request reviews API — the same mechanism Copilot uses. This produces inline comments on specific file lines in the "Files changed" tab, plus a top-level summary body, all as one atomic review submission.
+
+**Where each finding goes:**
+
+| Finding type | Where to post |
+|---|---|
+| Line-specific issue (wrong value, missing attribute, broken reference) | Inline comment on the exact file + line |
+| Architectural / general note (no specific line) | Review body |
+| Overall verdict | Review body |
+| Footnote | Review body (closing line) |
+
+**How to post:**
+
+```sh
+# Step 1 — get the head commit SHA
+COMMIT=$(gh pr view <N> --repo <owner>/<repo> --json headRefOid --jq '.headRefOid')
+
+# Step 2 — submit the review
+gh api --method POST /repos/<owner>/<repo>/pulls/<N>/reviews \
+  --input - <<EOF
+{
+  "commit_id": "$COMMIT",
+  "event": "COMMENT",
+  "body": "<overall verdict, architectural notes, footnote>",
+  "comments": [
+    {
+      "path": "<file path relative to repo root>",
+      "line": <line number>,
+      "side": "RIGHT",
+      "body": "<verdict prefix> <finding referencing the rule>"
+    }
+  ]
+}
+EOF
+```
+
+Add one object to `comments` for each line-specific finding. Use `event: "COMMENT"` — never `"APPROVE"` or `"REQUEST_CHANGES"` (branch owner approves; AI only comments).
+
+Every review comment and every follow-up update — must close with a footnote in the review body:
+
+```
+---
+*Review by <GitHub username> · in collaboration with <model name>*
+```
+
+Example: `*Review by AlexRebula · in collaboration with Claude Sonnet 4.6*`
+
+The footnote identifies who is accountable for the review and which model assisted, creating a permanent audit trail in the PR timeline.
 
 ---
 
