@@ -59,7 +59,7 @@ Use these commands in any AI chat session to start a specific workflow:
 
 | Command                 | What it does                                                                                                                                                                      | Full procedure               |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `review pr <N>`         | Perform an initial code review: read every changed file, check against §5–§11, submit findings via the GitHub reviews API with inline comments.                                   | `docs/code-review-guide.md`  |
+| `review pr <N>`         | Perform an initial code review: read every changed file, check against §5–§12, submit findings via the GitHub reviews API with inline comments.                                   | `docs/code-review-guide.md`  |
 | `respond pr review <N>` | Respond to an existing Copilot review: gather all threads, triage each one (✅ / ❌ / ⚠️ / ⏸️), fix valid issues in one batch commit, post follow-up replies with the commit SHA. | `docs/pr-review-workflow.md` |
 
 These two commands are distinct. `review pr <N>` makes you the reviewer. `respond pr review <N>` makes you the branch owner's assistant working through Copilot's threads.
@@ -79,7 +79,8 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 9. [Accessibility](#9-accessibility)
 10. [Testing](#10-testing)
 11. [Definition of Done](#11-definition-of-done)
-12. [Private Extension](#12-private-extension)
+12. [Sensitive File Encryption](#12-sensitive-file-encryption)
+13. [Private Extension](#13-private-extension)
 
 ---
 
@@ -573,7 +574,31 @@ Mock at module boundaries only. Never mock a function that lives in the same pac
 
 ---
 
-## 12. Private Extension
+## 12. Sensitive File Encryption
+
+### At-rest encryption — private repos with personal data
+
+A private GitHub repository is not sufficient protection for personal or legally sensitive
+documents. Repository privacy can be changed, access tokens can be leaked, and private
+repos can become public by accident. Sensitive documents must be encrypted at rest so they
+appear as unreadable blobs on GitHub even if the repo is ever exposed.
+
+**Rule — non-negotiable:**
+
+> Before advising that "private repo status is sufficient" for any sensitive file path,
+> verify the path is covered by at-rest encryption in the repository's configuration.
+> If it is not listed, it is **not encrypted** — do not assume it is.
+
+**Scope:** This rule applies to any private repository that contains personal names,
+legal case data, career intelligence, medical information, financial data, or any
+content that would cause harm if made public.
+
+**Implementation details** (which tool, which paths, key storage) are project-specific
+and belong in the private extension — not here.
+
+---
+
+## 13. Private Extension
 
 For sensitive rules (banned identifiers, private refs, internal project codes), also load:
 
