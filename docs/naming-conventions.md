@@ -17,7 +17,7 @@ Before settling on a name, apply all four questions:
 1. **Does the name describe what it renders, not what it does?** Components are nouns, not verbs. `MetricCard` ✅ — `ShowMetric` ❌.
 2. **Does the name include the MUI base component it extends?** A card that shows a metric is a `MetricCard`, not a `Metric`.
 3. **Is the suffix the most specific one that fits?** Prefer `Row` over `Strip` when the element is a true horizontal sequence. Prefer `Card` over `Surface`.
-4. **Does it avoid a generic prefix?** `DataCard` says nothing about which data. `MetricCard`, `AvatarCard`, `StatCard` all say something specific.
+4. **Does it avoid a generic prefix?** Prohibited prefixes: `Base*`, `Custom*`, `Common*`, `Generic*`, `My*`, `New*`, `Advanced*`. These describe nothing — find the specific noun instead (`CardShell` not `BaseCard`, `StatCard` not `CustomCard`).
 
 If any answer is "no", revise the name before writing a single line of code. Names that pass the gate now save rename churn later.
 
