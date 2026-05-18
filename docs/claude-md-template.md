@@ -11,6 +11,7 @@ https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/docs
 Read that file in full before responding to any task.
 
 For Claude Code web sessions, see the MCP tool overrides in:
+
 ```
 https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/CLAUDE.md
 ```
