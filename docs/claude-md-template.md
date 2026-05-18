@@ -1,5 +1,7 @@
 # AI Reviewer Instructions
 
+> **Usage:** Save this file as `CLAUDE.md` in the root of your repository.
+
 This project follows the [LittleBranches OSS Quality Standards](https://github.com/LittleBranches/oss-quality-standards).
 
 **At the start of every session, load all rules from:**
