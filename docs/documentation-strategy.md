@@ -62,6 +62,20 @@ export interface MetricCardProps extends CardProps {
 - Author names
 - Task or ticket references ("added for issue #123")
 
+### JSDoc rules for MUI component props
+
+| Situation | Rule |
+|---|---|
+| Prop inherited from MUI | No JSDoc — never redeclare |
+| Own prop, purpose obvious from name | No JSDoc |
+| Own prop, non-obvious behaviour | One-line JSDoc max |
+| Own prop with a default value | Add `@default value` tag |
+| Own prop with a safety constraint | Add the constraint in the JSDoc |
+| Component function | One-sentence JSDoc explaining what problem it solves |
+
+Never write multi-line JSDoc blocks. One line is almost always enough.
+If an explanation takes more than one sentence, the component API is probably wrong.
+
 ---
 
 ## Tier 2 — Story JSDoc
@@ -205,3 +219,14 @@ Optional but encouraged:
 - Story export names use PascalCase: `WithTrend`, `LoadingState`, `LongLabel`
 - The Storybook title matches the folder path: `Material/Surfaces/Card/MetricCard`
 - Do not prefix story names with the component name: `WithTrend` not `MetricCardWithTrend`
+
+### Storybook title convention
+
+The `title` in every `.stories.tsx` file must mirror the `src/components/` folder
+path exactly, using `/` as the separator and title-casing each segment.
+
+`src/components/material/surfaces/card/stat/` → `title: 'Material/Surfaces/Card/Stat'`
+
+- Derive the title by reading the file path — never invent a title independently.
+- If a `title` disagrees with its folder path, fix the `title`, never move the file.
+- The folder path always wins over any verbal convention.

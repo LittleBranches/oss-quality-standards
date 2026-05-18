@@ -8,7 +8,7 @@ sidebar_position: 4
 
 > This guide tells any AI reviewer what to look for when reviewing a PR in a LittleBranches repository. Load [AGENTS.md](./AGENTS.md) first, then use this guide as your review checklist.
 >
-> `docs/pr-review-workflow.md` covers *how to respond* once you have findings. This document covers *what to find*.
+> `docs/pr-review-workflow.md` covers _how to respond_ once you have findings. This document covers _what to find_.
 
 ---
 
@@ -16,7 +16,7 @@ sidebar_position: 4
 
 1. Run (or ask for the output of) `npm run check:verify`. If the gate is red, stop and flag it — a red gate is a blocker regardless of code quality.
 2. Read the PR description. Note the "What / Why / Type" to understand the intended change before looking at diffs.
-3. Read every changed file before commenting on any of them. Commenting file-by-file without the full picture leads to contradictory feedback.
+3. Read every changed file before commenting on any of them. Commenting file-by-file without the full picture leads to contradictory feedback. **All file types are in scope** — this includes scripts (`.js`, `.mjs`), configuration files (`tsconfig.json`, `docusaurus.config.ts`, `package.json`, `.gitignore`), stylesheets (`.css`, `.module.css`), and content files (`.md`, `.mdx`). Do not limit the review to component files.
 
 ---
 
@@ -24,18 +24,18 @@ sidebar_position: 4
 
 Review in this order. Stop at each blocking category and flag all violations before moving to the next.
 
-| Priority | Category | Blocking? |
-|---|---|---|
-| 1 | Security (OWASP Top 10) | Always blocking |
-| 2 | Accessibility (WCAG 2.2 AA) | Always blocking |
-| 3 | Correctness (logic errors, broken contracts) | Blocking |
-| 4 | Component API contract | Blocking |
-| 5 | Component structure | Blocking |
-| 6 | Naming conventions | Blocking |
-| 7 | Testing | Blocking |
-| 8 | Documentation | Blocking for public API changes |
-| 9 | Code quality | Non-blocking unless severe |
-| 10 | Style / formatting | Non-blocking (Prettier handles this) |
+| Priority | Category                                     | Blocking?                            |
+| -------- | -------------------------------------------- | ------------------------------------ |
+| 1        | Security (OWASP Top 10)                      | Always blocking                      |
+| 2        | Accessibility (WCAG 2.2 AA)                  | Always blocking                      |
+| 3        | Correctness (logic errors, broken contracts) | Blocking                             |
+| 4        | Component API contract                       | Blocking                             |
+| 5        | Component structure                          | Blocking                             |
+| 6        | Naming conventions                           | Blocking                             |
+| 7        | Testing                                      | Blocking                             |
+| 8        | Documentation                                | Blocking for public API changes      |
+| 9        | Code quality                                 | Non-blocking unless severe           |
+| 10       | Style / formatting                           | Non-blocking (Prettier handles this) |
 
 ---
 
@@ -86,18 +86,18 @@ See [Accessibility](./accessibility.md) for the full rule set.
 
 Check every changed or new component against these rules. All are blocking:
 
-| Rule | What to look for | See |
-|---|---|---|
-| Props extends MUI root | `interface FooProps extends CardProps` (or equivalent) | §6.1 |
-| `sx` array-safety | `sx={[{ ... }, ...(Array.isArray(sx) ? sx : [sx])]}` | §6.2 |
-| `...other` passthrough | `{...other}` on the root element | §6.3 |
-| No hardcoded colours | No hex, RGB, or CSS colour names — use theme tokens | §6.4 |
-| No `React.FC` | `export function Foo(...)` not `const Foo: React.FC = ...` | §6.5 |
-| No bare `<Box>` with semantics | `<Box>` must be a pure layout container | §6.6 |
-| `shouldForwardProp` on styled | Any `styled()` call with a custom prop must filter it | §6.7 |
-| `displayName` set | Every component, especially `forwardRef` / `memo` returns | §6.8 |
-| `ref` forwarding | Components wrapping a DOM element or MUI component must use `forwardRef` | §6.9 |
-| Icon slots typed `ReactNode` | Not a specific icon type | §6.10 |
+| Rule                           | What to look for                                                         | See   |
+| ------------------------------ | ------------------------------------------------------------------------ | ----- |
+| Props extends MUI root         | `interface FooProps extends CardProps` (or equivalent)                   | §6.1  |
+| `sx` array-safety              | `sx={[{ ... }, ...(Array.isArray(sx) ? sx : [sx])]}`                     | §6.2  |
+| `...other` passthrough         | `{...other}` on the root element                                         | §6.3  |
+| No hardcoded colours           | No hex, RGB, or CSS colour names — use theme tokens                      | §6.4  |
+| No `React.FC`                  | `export function Foo(...)` not `const Foo: React.FC = ...`               | §6.5  |
+| No bare `<Box>` with semantics | `<Box>` must be a pure layout container                                  | §6.6  |
+| `shouldForwardProp` on styled  | Any `styled()` call with a custom prop must filter it                    | §6.7  |
+| `displayName` set              | Every component, especially `forwardRef` / `memo` returns                | §6.8  |
+| `ref` forwarding               | Components wrapping a DOM element or MUI component must use `forwardRef` | §6.9  |
+| Icon slots typed `ReactNode`   | Not a specific icon type                                                 | §6.10 |
 
 See [Component API Contract](./component-api-contract.md) for full detail.
 
@@ -113,18 +113,18 @@ See [Component API Contract](./component-api-contract.md) for full detail.
 
 File naming quick reference:
 
-| File | Expected name |
-|---|---|
-| Main component | `<name>.tsx` |
-| Barrel | `index.ts` |
-| Tests | `<name>.test.ts` |
-| Styles | `<name>.styles.ts` |
-| Style tests | `<name>.styles.test.ts` |
-| Stories | `<name>.stories.tsx` |
-| Constants | `<name>.const.ts` (not `.constants.ts`) |
-| Defaults | `<name>.defaults.tsx` (`.tsx` — can contain JSX) |
-| Utilities | `<name>.utils.ts` (not `.utilities.ts`) |
-| Animations | `<name>.animations.ts` |
+| File           | Expected name                                    |
+| -------------- | ------------------------------------------------ |
+| Main component | `<name>.tsx`                                     |
+| Barrel         | `index.ts`                                       |
+| Tests          | `<name>.test.ts`                                 |
+| Styles         | `<name>.styles.ts`                               |
+| Style tests    | `<name>.styles.test.ts`                          |
+| Stories        | `<name>.stories.tsx`                             |
+| Constants      | `<name>.const.ts` (not `.constants.ts`)          |
+| Defaults       | `<name>.defaults.tsx` (`.tsx` — can contain JSX) |
+| Utilities      | `<name>.utils.ts` (not `.utilities.ts`)          |
+| Animations     | `<name>.animations.ts`                           |
 
 See [Component Structure](./component-structure.md) for migration steps.
 
@@ -192,16 +192,65 @@ Prettier and ESLint handle this automatically. Flag a style issue only if it sur
 
 Use the standard verdict prefixes from [AGENTS.md §4.2.2](./AGENTS.md#22--respond-to-every-thread--no-exceptions):
 
-| Verdict | Prefix | When |
-|---|---|---|
-| Blocking fix required | `✅ Valid.` | Issue is clear and must be fixed |
-| No action needed | `❌ Not valid.` | Concern does not apply |
-| Partial fix | `⚠️ Partially valid.` | Some of the concern is right |
-| Needs owner input | `⏸️ Needs branch owner input.` | Cannot resolve without more context |
+| Verdict               | Prefix                         | When                                |
+| --------------------- | ------------------------------ | ----------------------------------- |
+| Blocking fix required | `✅ Valid.`                    | Issue is clear and must be fixed    |
+| No action needed      | `❌ Not valid.`                | Concern does not apply              |
+| Partial fix           | `⚠️ Partially valid.`          | Some of the concern is right        |
+| Needs owner input     | `⏸️ Needs branch owner input.` | Cannot resolve without more context |
 
 Each comment must reference the specific rule it enforces (e.g. "AGENTS.md §6.2 — sx array-safety") so the author can look it up rather than having to take your word for it.
 
 Leave a comment on every issue found, even minor ones — silence is ambiguous. If you have nothing to flag in a category, you do not need to comment on it.
+
+After completing the review, post findings using the GitHub pull request reviews API — the same mechanism Copilot uses. This produces inline comments on specific file lines in the "Files changed" tab, plus a top-level summary body, all as one atomic review submission.
+
+**Where each finding goes:**
+
+| Finding type                                                           | Where to post                           |
+| ---------------------------------------------------------------------- | --------------------------------------- |
+| Line-specific issue (wrong value, missing attribute, broken reference) | Inline comment on the exact file + line |
+| Architectural / general note (no specific line)                        | Review body                             |
+| Overall verdict                                                        | Review body                             |
+| Footnote                                                               | Review body (closing line)              |
+
+**How to post:**
+
+```sh
+# Step 1 — get the head commit SHA
+COMMIT=$(gh pr view <N> --repo <owner>/<repo> --json headRefOid --jq '.headRefOid')
+
+# Step 2 — submit the review
+gh api --method POST /repos/<owner>/<repo>/pulls/<N>/reviews \
+  --input - <<EOF
+{
+  "commit_id": "$COMMIT",
+  "event": "COMMENT",
+  "body": "<overall verdict, architectural notes, footnote>",
+  "comments": [
+    {
+      "path": "<file path relative to repo root>",
+      "line": <line number>,
+      "side": "RIGHT",
+      "body": "<verdict prefix> <finding referencing the rule>"
+    }
+  ]
+}
+EOF
+```
+
+Add one object to `comments` for each line-specific finding. Use `event: "COMMENT"` — never `"APPROVE"` or `"REQUEST_CHANGES"` (branch owner approves; AI only comments).
+
+Every review submission — the review body — must close with a footnote. Add it once to the review body; do not repeat it in individual inline comments:
+
+```
+---
+*Review by <GitHub username> · in collaboration with <model name>*
+```
+
+Example: `*Review by AlexRebula · in collaboration with Claude Sonnet 4.6*`
+
+The footnote identifies who is accountable for the review and which model assisted, creating a permanent audit trail in the PR timeline.
 
 ---
 
