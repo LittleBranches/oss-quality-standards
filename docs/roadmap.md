@@ -1,7 +1,6 @@
 ---
 id: roadmap
 title: Roadmap
-sidebar_position: 14
 ---
 
 # OSS Quality Standards — Roadmap
@@ -200,15 +199,15 @@ Tools like [Turborepo](https://turbo.build/repo) and [Nx](https://nx.dev) are wi
 
 **This phase documents the current decision and sets the trigger conditions for revisiting it.**
 
-| Item                                                                                         | Status |
-| -------------------------------------------------------------------------------------------- | ------ |
-| `docs/monorepo-decision.md` — ADR-style document                                             | ⬜     |
-| State the current choice: polyrepo                                                           | ⬜     |
-| Explain the reason: `alexrebula` is proprietary and cannot share a repo with public packages | ⬜     |
-| Explain the cost: manual `yalc push` workflow, no shared CI pipeline, config drift risk      | ⬜     |
-| Document the trigger conditions for migration: when would a monorepo become the right call?  | ⬜     |
-| Cover Turborepo and Nx as the primary candidates — what each offers and the trade-offs       | ⬜     |
-| AGENTS.md §3 (Quality Gate) — note the polyrepo constraint on inter-package dev workflow     | ⬜     |
+| Item                                                                                                          | Status |
+| ------------------------------------------------------------------------------------------------------------- | ------ |
+| `docs/monorepo-decision.md` — ADR-style document                                                              | ⬜     |
+| State the current choice: polyrepo                                                                            | ⬜     |
+| Explain the reason: private portfolio repos cannot share a version-controlled repository with public packages | ⬜     |
+| Explain the cost: manual `yalc push` workflow, no shared CI pipeline, config drift risk                       | ⬜     |
+| Document the trigger conditions for migration: when would a monorepo become the right call?                   | ⬜     |
+| Cover Turborepo and Nx as the primary candidates — what each offers and the trade-offs                        | ⬜     |
+| AGENTS.md §3 (Quality Gate) — note the polyrepo constraint on inter-package dev workflow                      | ⬜     |
 
 ---
 
