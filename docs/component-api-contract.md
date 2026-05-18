@@ -23,7 +23,7 @@ Every component's props interface must:
 export interface MetricCardProps extends CardProps {
   value: number;
   label: string;
-  trend?: 'up' | 'down' | 'flat';
+  trend?: "up" | "down" | "flat";
 }
 
 // ❌ wrong — doesn't extend MUI props
@@ -120,7 +120,9 @@ export interface StatusLabelProps {
 Icons that are purely decorative (carry no meaning beyond visual reinforcement) must be wrapped with `aria-hidden="true"`:
 
 ```tsx
-{icon && <span aria-hidden="true">{icon}</span>}
+{
+  icon && <span aria-hidden="true">{icon}</span>;
+}
 ```
 
 Icons that carry meaning (e.g. a visibility toggle, a close button) must have an accessible label on the interactive element, not on the icon itself.
@@ -142,7 +144,7 @@ color?: string;
 Map the colour prop to the theme inside the component:
 
 ```ts
-const paletteColor = theme.palette[color ?? 'primary'];
+const paletteColor = theme.palette[color ?? "primary"];
 ```
 
 ---
@@ -187,7 +189,7 @@ When using MUI's `styled()`, always add `shouldForwardProp` for any custom prop 
 
 ```ts
 const StyledCard = styled(Card, {
-  shouldForwardProp: (prop) => prop !== 'active',
+  shouldForwardProp: (prop) => prop !== "active",
 })<{ active?: boolean }>(({ active, theme }) => ({
   borderColor: active ? theme.palette.primary.main : theme.palette.divider,
 }));
@@ -202,7 +204,7 @@ Without `shouldForwardProp`, React will emit an unknown-prop warning and the pro
 Set `displayName` on every component so React DevTools and error stack traces show a meaningful name:
 
 ```ts
-MetricCard.displayName = 'MetricCard';
+MetricCard.displayName = "MetricCard";
 ```
 
 This is especially important for components returned from `forwardRef` or `memo`, where the inferred name may be lost.
@@ -258,13 +260,12 @@ new decision. Never re-declare props that already exist on the MUI interface.
 
 ```ts
 // ✅ Correct — extends PaperProps, adds only what's new
+// Only document props where the purpose or constraint is non-obvious.
 export interface StatCardProps extends PaperProps {
-  /** Card label. */
   label: string;
-  /** Primary value. */
   value: string | number;
   /** Palette colour key. @default 'primary' */
-  color?: 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
+  color?: "primary" | "secondary" | "info" | "success" | "warning" | "error";
 }
 ```
 
@@ -277,8 +278,13 @@ Props: do not extend a specific MUI base. Accept `items: ItemType[]`,
 `sx?: SxProps<Theme>`, and configuration props that control composition behaviour.
 The item type is the real API — document it thoroughly.
 
+Even though Tier 3 interfaces do not extend a specific MUI component, the component
+implementation must still spread `...other` onto its root element. Extend
+`React.HTMLAttributes<HTMLElement>` (or the appropriate HTML element type) to allow
+consumers to pass `data-*`, `aria-*`, `id`, and `className`.
+
 ```ts
-// ✅ Correct — item type is the real API; container props are minimal
+// ✅ Correct — item type is the real API; container still accepts HTML attributes
 export interface ActivityFeedItem {
   /** Unique identifier. */
   id: string;
@@ -287,7 +293,7 @@ export interface ActivityFeedItem {
   /** Relative or absolute timestamp string. */
   timestamp: string;
 }
-export interface ActivityFeedListProps {
+export interface ActivityFeedListProps extends React.HTMLAttributes<HTMLElement> {
   items: ActivityFeedItem[];
   sx?: SxProps<Theme>;
 }
@@ -303,10 +309,10 @@ The most common mistake is creating a wrapper component when a shared style cons
 constant in a `*.styles.ts` file. If the shared thing is structural (a recurring DOM
 shape with multiple named slots), use a thin wrapper component.
 
-| Shared thing | Correct form | Wrong form |
-|---|---|---|
-| Card elevation, border-radius, padding | `cardBaseSx` constant | `BaseCard` component |
-| Typography scale | MUI `Typography` with `variant` prop | `Heading`, `Caption` wrappers |
+| Shared thing                           | Correct form                         | Wrong form                    |
+| -------------------------------------- | ------------------------------------ | ----------------------------- |
+| Card elevation, border-radius, padding | `cardBaseSx` constant                | `BaseCard` component          |
+| Typography scale                       | MUI `Typography` with `variant` prop | `Heading`, `Caption` wrappers |
 
 ---
 
@@ -325,7 +331,7 @@ Test: "Would a second unrelated project want this exact component?" If no, do no
 
 ## Additional prop design rules
 
-- **`sx` always last.** The `sx` prop is always the last prop in the interface, forwarded to the root element.
+- **`sx` always last (Tier 3).** In Tier 3 interfaces that declare `sx` explicitly, it is always the last prop. In Tier 1/2 interfaces, `sx` is inherited from the extended MUI base — do not redeclare it, but still forward it to the root element in the implementation.
 - **`color` follows MUI palette key convention.** Always `'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error'` with `@default 'primary'`. Never invent a custom colour type.
 - **No boolean props that duplicate MUI.** If MUI already has `disabled`, `fullWidth`, or `variant`, do not re-declare them — they come through the extended interface.
 - **Data props use plain types.** `items: Item[]` not `items: React.ComponentProps<...>`. Data and presentation are always separated.
