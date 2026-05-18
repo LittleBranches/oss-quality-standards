@@ -72,7 +72,7 @@ if (violations.length > 0) {
   console.error(
     '\nEach component must live in its own named subfolder:\n' +
       '   ✅  src/components/<layer>/<category>/<name>/<name>.tsx\n' +
-      '   ❌  src/components/<layer>/<category>/<name>.tsx\n'
+      '   ❌  src/components/<layer>/<category>/<name>.tsx\n',
   );
   process.exit(1);
 } else {

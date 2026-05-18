@@ -80,30 +80,30 @@ Do this in a dedicated `chore/` commit so the move is easy to identify in git hi
 
 All files inside a component folder use the component's kebab-case name as a prefix, followed by a dot-separated suffix:
 
-| File | Suffix | Notes |
-|---|---|---|
-| Main component | `<name>.tsx` or `<name>.ts` | `.ts` for non-JSX |
-| Barrel | `index.ts` | Always present |
-| Unit tests | `<name>.test.ts` | |
-| Styles | `<name>.styles.ts` | |
-| Style tests | `<name>.styles.test.ts` | |
-| Stories | `<name>.stories.tsx` | |
-| Constants | `<name>.const.ts` | Not `.constants.ts` |
-| Defaults | `<name>.defaults.tsx` | `.tsx` because defaults can include JSX |
-| Utilities | `<name>.utils.ts` | Not `.utilities.ts` |
-| Animations | `<name>.animations.ts` | |
-| Story-specific styles | `<name>.stories.styles.ts` | Rare |
+| File                  | Suffix                      | Notes                                   |
+| --------------------- | --------------------------- | --------------------------------------- |
+| Main component        | `<name>.tsx` or `<name>.ts` | `.ts` for non-JSX                       |
+| Barrel                | `index.ts`                  | Always present                          |
+| Unit tests            | `<name>.test.ts`            |                                         |
+| Styles                | `<name>.styles.ts`          |                                         |
+| Style tests           | `<name>.styles.test.ts`     |                                         |
+| Stories               | `<name>.stories.tsx`        |                                         |
+| Constants             | `<name>.const.ts`           | Not `.constants.ts`                     |
+| Defaults              | `<name>.defaults.tsx`       | `.tsx` because defaults can include JSX |
+| Utilities             | `<name>.utils.ts`           | Not `.utilities.ts`                     |
+| Animations            | `<name>.animations.ts`      |                                         |
+| Story-specific styles | `<name>.stories.styles.ts`  | Rare                                    |
 
 ---
 
 ## Common mistakes
 
-| Mistake | Why it fails the structure check |
-|---|---|
-| `src/components/material/surfaces/metric-card.tsx` | Flat in a layer folder |
-| `src/components/material/surfaces/card/MetricCard.tsx` | PascalCase filename — must be kebab-case |
-| `src/components/material/surfaces/card/metric-card/MetricCard.tsx` | Main file must match folder name: `metric-card.tsx` |
-| `src/components/material/surfaces/card/metric-card/index.tsx` | Main file must be `metric-card.tsx`, not `index.tsx` |
+| Mistake                                                            | Why it fails the structure check                     |
+| ------------------------------------------------------------------ | ---------------------------------------------------- |
+| `src/components/material/surfaces/metric-card.tsx`                 | Flat in a layer folder                               |
+| `src/components/material/surfaces/card/MetricCard.tsx`             | PascalCase filename — must be kebab-case             |
+| `src/components/material/surfaces/card/metric-card/MetricCard.tsx` | Main file must match folder name: `metric-card.tsx`  |
+| `src/components/material/surfaces/card/metric-card/index.tsx`      | Main file must be `metric-card.tsx`, not `index.tsx` |
 
 `index.tsx` (with JSX) is only permitted as a flat file at the layer level — not as the main component file inside a component folder.
 
@@ -113,13 +113,13 @@ All files inside a component folder use the component's kebab-case name as a pre
 
 These are **never** flagged as violations, regardless of where they appear:
 
-| Pattern | Purpose |
-|---|---|
-| `index.ts` | Barrel export for the layer or category |
-| `index.tsx` | Barrel export with JSX (rare, e.g. a context provider) |
-| `types.ts` | Shared type definitions for the layer |
-| `use-*.ts` | Shared hooks used across multiple components in the layer |
-| `*.stories.tsx` (at layer level) | Cross-component Storybook stories |
+| Pattern                          | Purpose                                                   |
+| -------------------------------- | --------------------------------------------------------- |
+| `index.ts`                       | Barrel export for the layer or category                   |
+| `index.tsx`                      | Barrel export with JSX (rare, e.g. a context provider)    |
+| `types.ts`                       | Shared type definitions for the layer                     |
+| `use-*.ts`                       | Shared hooks used across multiple components in the layer |
+| `*.stories.tsx` (at layer level) | Cross-component Storybook stories                         |
 
 ---
 

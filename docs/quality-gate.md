@@ -55,7 +55,7 @@ git config core.hooksPath .githooks
 - name: Quality gate
   run: npm run check:verify
   env:
-    CI: true   # enables Storybook build automatically
+    CI: true # enables Storybook build automatically
 ```
 
 ---
@@ -117,6 +117,7 @@ if (!run('My new check', 'node scripts/my-check.js', { fatal: false })) {
 ```
 
 Guidelines:
+
 - Use `fatal: false` so the gate continues and reports all failures at once rather than stopping at the first.
 - Keep the failure message actionable — tell the developer exactly what to run to fix it.
 - If the check is optional (like Storybook), gate it behind a flag or an `existsSync` check.

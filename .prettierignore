@@ -1,0 +1,6 @@
+# Docusaurus build output
+build/
+.docusaurus/
+
+# Generated files
+package-lock.json

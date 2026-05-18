@@ -25,25 +25,25 @@ If any answer is "no", revise the name before writing a single line of code. Nam
 
 ## Suffix vocabulary
 
-| Suffix | What it signals | Example |
-|---|---|---|
-| `Card` | A contained surface with elevation and a defined content region | `MetricCard`, `AvatarCard` |
-| `Row` | A horizontal sequence of related items | `HeroButtonsRow`, `ActionRow` |
-| `List` | A vertical sequence with implicit ordering or repetition | `FeatureList`, `NotificationList` |
-| `Table` | Columnar data with headers | `PricingTable`, `ComparisonTable` |
-| `Section` | A full-width, self-contained page section | `HeroSection`, `TestimonialsSection` |
-| `Layout` | A structural wrapper with no visible appearance | `PageLayout`, `SidebarLayout` |
-| `Label` | A small inline element that annotates another element | `StatusLabel`, `BadgeLabel` |
-| `Sheet` | A panel or drawer-like surface anchored to an edge | `FilterSheet`, `DetailSheet` |
-| `Strip` | A thin, full-width horizontal band (less structured than a `Row`) | `AnnouncementStrip`, `PromoBanner` |
-| `Dialog` | A modal overlay requiring user action | `ConfirmDialog`, `UploadDialog` |
-| `Drawer` | A slide-in panel (non-modal or modal) | `NavigationDrawer`, `CartDrawer` |
-| `Form` | A grouping of form controls with submit logic | `LoginForm`, `ProfileForm` |
-| `Field` | A single form control + label + error | `EmailField`, `PasswordField` |
-| `Icon` | An SVG icon wrapper | `HomeIcon`, `ChevronIcon` |
-| `Avatar` | A circular user or entity representation | `UserAvatar`, `TeamAvatar` |
-| `Chip` | A small, pill-shaped label with optional action | `TagChip`, `FilterChip` |
-| `Tab` | A single tab in a `Tabs` group | `DashboardTab`, `SettingsTab` |
+| Suffix    | What it signals                                                   | Example                              |
+| --------- | ----------------------------------------------------------------- | ------------------------------------ |
+| `Card`    | A contained surface with elevation and a defined content region   | `MetricCard`, `AvatarCard`           |
+| `Row`     | A horizontal sequence of related items                            | `HeroButtonsRow`, `ActionRow`        |
+| `List`    | A vertical sequence with implicit ordering or repetition          | `FeatureList`, `NotificationList`    |
+| `Table`   | Columnar data with headers                                        | `PricingTable`, `ComparisonTable`    |
+| `Section` | A full-width, self-contained page section                         | `HeroSection`, `TestimonialsSection` |
+| `Layout`  | A structural wrapper with no visible appearance                   | `PageLayout`, `SidebarLayout`        |
+| `Label`   | A small inline element that annotates another element             | `StatusLabel`, `BadgeLabel`          |
+| `Sheet`   | A panel or drawer-like surface anchored to an edge                | `FilterSheet`, `DetailSheet`         |
+| `Strip`   | A thin, full-width horizontal band (less structured than a `Row`) | `AnnouncementStrip`, `PromoBanner`   |
+| `Dialog`  | A modal overlay requiring user action                             | `ConfirmDialog`, `UploadDialog`      |
+| `Drawer`  | A slide-in panel (non-modal or modal)                             | `NavigationDrawer`, `CartDrawer`     |
+| `Form`    | A grouping of form controls with submit logic                     | `LoginForm`, `ProfileForm`           |
+| `Field`   | A single form control + label + error                             | `EmailField`, `PasswordField`        |
+| `Icon`    | An SVG icon wrapper                                               | `HomeIcon`, `ChevronIcon`            |
+| `Avatar`  | A circular user or entity representation                          | `UserAvatar`, `TeamAvatar`           |
+| `Chip`    | A small, pill-shaped label with optional action                   | `TagChip`, `FilterChip`              |
+| `Tab`     | A single tab in a `Tabs` group                                    | `DashboardTab`, `SettingsTab`        |
 
 Adding a new suffix requires a team decision — do not introduce ad-hoc suffixes. When in doubt, pick the closest existing one.
 
@@ -92,29 +92,29 @@ use-breakpoint.ts → export function useBreakpoint
 
 These prefixes are banned because they say nothing about the component:
 
-| Banned prefix | Why banned | Instead |
-|---|---|---|
-| `Base*` | Everything is a base | Name the concept |
-| `Custom*` | All components are custom | Name the concept |
-| `Common*` | Vague — belongs to a layer | Name the concept |
-| `Generic*` | Contradicts specificity goal | Name the concept |
-| `My*` | Personal — not a library name | Name the concept |
-| `New*` | Temporal — will be old tomorrow | Name the concept |
-| `Advanced*` | Marketing adjective | Name the concept |
+| Banned prefix | Why banned                      | Instead          |
+| ------------- | ------------------------------- | ---------------- |
+| `Base*`       | Everything is a base            | Name the concept |
+| `Custom*`     | All components are custom       | Name the concept |
+| `Common*`     | Vague — belongs to a layer      | Name the concept |
+| `Generic*`    | Contradicts specificity goal    | Name the concept |
+| `My*`         | Personal — not a library name   | Name the concept |
+| `New*`        | Temporal — will be old tomorrow | Name the concept |
+| `Advanced*`   | Marketing adjective             | Name the concept |
 
 ---
 
 ## Folder and file names vs export names
 
-| Thing | Convention | Example |
-|---|---|---|
-| Component folder | kebab-case | `metric-card/` |
-| Main component file | `<name>.tsx` | `metric-card.tsx` |
-| Barrel | `index.ts` | `index.ts` |
-| Exported React component | PascalCase | `MetricCard` |
-| Exported props type | `<Name>Props` | `MetricCardProps` |
-| Exported hook | camelCase, starts with `use` | `useMetricCard` |
-| Exported constant | SCREAMING_SNAKE_CASE | `METRIC_CARD_DEFAULT_SIZE` |
+| Thing                    | Convention                   | Example                    |
+| ------------------------ | ---------------------------- | -------------------------- |
+| Component folder         | kebab-case                   | `metric-card/`             |
+| Main component file      | `<name>.tsx`                 | `metric-card.tsx`          |
+| Barrel                   | `index.ts`                   | `index.ts`                 |
+| Exported React component | PascalCase                   | `MetricCard`               |
+| Exported props type      | `<Name>Props`                | `MetricCardProps`          |
+| Exported hook            | camelCase, starts with `use` | `useMetricCard`            |
+| Exported constant        | SCREAMING_SNAKE_CASE         | `METRIC_CARD_DEFAULT_SIZE` |
 
 ---
 
@@ -122,19 +122,19 @@ These prefixes are banned because they say nothing about the component:
 
 Every file inside a component folder uses the component's kebab-case name as a prefix, followed by a dot-separated suffix. The full list:
 
-| File | Suffix | Notes |
-|---|---|---|
-| Main component | `<name>.tsx` or `<name>.ts` | `.ts` for non-JSX |
-| Barrel | `index.ts` | Always present |
-| Unit tests | `<name>.test.ts` | |
-| Styles | `<name>.styles.ts` | |
-| Style tests | `<name>.styles.test.ts` | |
-| Stories | `<name>.stories.tsx` | |
-| Constants | `<name>.const.ts` | Not `.constants.ts` |
-| Defaults | `<name>.defaults.tsx` | `.tsx` (not `.ts`) because default values can include JSX |
-| Utilities | `<name>.utils.ts` | Not `.utilities.ts` |
-| Animations | `<name>.animations.ts` | |
-| Story-specific styles | `<name>.stories.styles.ts` | Rare |
+| File                  | Suffix                      | Notes                                                     |
+| --------------------- | --------------------------- | --------------------------------------------------------- |
+| Main component        | `<name>.tsx` or `<name>.ts` | `.ts` for non-JSX                                         |
+| Barrel                | `index.ts`                  | Always present                                            |
+| Unit tests            | `<name>.test.ts`            |                                                           |
+| Styles                | `<name>.styles.ts`          |                                                           |
+| Style tests           | `<name>.styles.test.ts`     |                                                           |
+| Stories               | `<name>.stories.tsx`        |                                                           |
+| Constants             | `<name>.const.ts`           | Not `.constants.ts`                                       |
+| Defaults              | `<name>.defaults.tsx`       | `.tsx` (not `.ts`) because default values can include JSX |
+| Utilities             | `<name>.utils.ts`           | Not `.utilities.ts`                                       |
+| Animations            | `<name>.animations.ts`      |                                                           |
+| Story-specific styles | `<name>.stories.styles.ts`  | Rare                                                      |
 
 The `.defaults.tsx` extension is a common mistake — it must end in `.tsx`, not `.ts`, because default prop values frequently contain JSX (e.g. a default icon node or a default slot component).
 
@@ -142,17 +142,17 @@ The `.defaults.tsx` extension is a common mistake — it must end in `.tsx`, not
 
 ## Casing rules at a glance
 
-| Context | Case | Notes |
-|---|---|---|
-| Folder names | kebab-case | All lowercase, hyphens only |
-| File names | kebab-case | Must match folder name for main component |
-| React component identifier | PascalCase | |
-| Props interface | PascalCase | Always ends in `Props` |
-| Hook function | camelCase | Must start with `use` |
-| Utility function | camelCase | |
-| Constant | SCREAMING_SNAKE_CASE | Module-level constants only |
-| CSS class (if used) | kebab-case | |
-| Storybook story name | PascalCase | Matches component name |
+| Context                    | Case                 | Notes                                     |
+| -------------------------- | -------------------- | ----------------------------------------- |
+| Folder names               | kebab-case           | All lowercase, hyphens only               |
+| File names                 | kebab-case           | Must match folder name for main component |
+| React component identifier | PascalCase           |                                           |
+| Props interface            | PascalCase           | Always ends in `Props`                    |
+| Hook function              | camelCase            | Must start with `use`                     |
+| Utility function           | camelCase            |                                           |
+| Constant                   | SCREAMING_SNAKE_CASE | Module-level constants only               |
+| CSS class (if used)        | kebab-case           |                                           |
+| Storybook story name       | PascalCase           | Matches component name                    |
 
 ---
 
