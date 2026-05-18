@@ -59,7 +59,7 @@ Use these commands in any AI chat session to start a specific workflow:
 
 | Command                 | What it does                                                                                                                                                                      | Full procedure               |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `review pr <N>`         | Perform an initial code review: read every changed file, check against §5–§11, submit findings via the GitHub reviews API with inline comments.                                   | `docs/code-review-guide.md`  |
+| `review pr <N>`         | Perform an initial code review: read every changed file, check against §5–§12, submit findings via the GitHub reviews API with inline comments.                                   | `docs/code-review-guide.md`  |
 | `respond pr review <N>` | Respond to an existing Copilot review: gather all threads, triage each one (✅ / ❌ / ⚠️ / ⏸️), fix valid issues in one batch commit, post follow-up replies with the commit SHA. | `docs/pr-review-workflow.md` |
 
 These two commands are distinct. `review pr <N>` makes you the reviewer. `respond pr review <N>` makes you the branch owner's assistant working through Copilot's threads.
@@ -79,7 +79,8 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 9. [Accessibility](#9-accessibility)
 10. [Testing](#10-testing)
 11. [Definition of Done](#11-definition-of-done)
-12. [Private Extension](#12-private-extension)
+12. [Sensitive File Encryption](#12-sensitive-file-encryption)
+13. [Private Extension](#13-private-extension)
 
 ---
 
