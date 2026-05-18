@@ -1,0 +1,4 @@
+#!/bin/sh
+# Pre-push quality gate — runs on every `git push`
+# Fail fast: exit 1 prevents the push from going through
+npm run check:verify

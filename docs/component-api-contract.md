@@ -23,7 +23,7 @@ Every component's props interface must:
 export interface MetricCardProps extends CardProps {
   value: number;
   label: string;
-  trend?: "up" | "down" | "flat";
+  trend?: 'up' | 'down' | 'flat';
 }
 
 // ❌ wrong — doesn't extend MUI props
@@ -144,7 +144,7 @@ color?: string;
 Map the colour prop to the theme inside the component:
 
 ```ts
-const paletteColor = theme.palette[color ?? "primary"];
+const paletteColor = theme.palette[color ?? 'primary'];
 ```
 
 ---
@@ -189,7 +189,7 @@ When using MUI's `styled()`, always add `shouldForwardProp` for any custom prop 
 
 ```ts
 const StyledCard = styled(Card, {
-  shouldForwardProp: (prop) => prop !== "active",
+  shouldForwardProp: (prop) => prop !== 'active',
 })<{ active?: boolean }>(({ active, theme }) => ({
   borderColor: active ? theme.palette.primary.main : theme.palette.divider,
 }));
@@ -204,7 +204,7 @@ Without `shouldForwardProp`, React will emit an unknown-prop warning and the pro
 Set `displayName` on every component so React DevTools and error stack traces show a meaningful name:
 
 ```ts
-MetricCard.displayName = "MetricCard";
+MetricCard.displayName = 'MetricCard';
 ```
 
 This is especially important for components returned from `forwardRef` or `memo`, where the inferred name may be lost.
@@ -265,7 +265,7 @@ export interface StatCardProps extends PaperProps {
   label: string;
   value: string | number;
   /** Palette colour key. @default 'primary' */
-  color?: "primary" | "secondary" | "info" | "success" | "warning" | "error";
+  color?: 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
 }
 ```
 

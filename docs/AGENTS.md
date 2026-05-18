@@ -34,19 +34,19 @@ This file contains all enforceable rules. Load it and you have everything needed
 
 The `docs/` folder in this repo contains expanded guides for each section below. They are for humans browsing the site and for agents that need more context on a specific rule. Consult them when the rule alone is not enough:
 
-| You need | Fetch this doc |
-|---|---|
-| What to look for when reviewing a PR (priority order, full checklist) | `docs/code-review-guide.md` |
-| Real ✅/❌/⚠️/⏸️ response examples, edge cases for review threads | `docs/pr-review-workflow.md` |
-| Gray area decisions on what requires approval vs what AI can do freely | `docs/ai-collaboration-protocol.md` |
-| What N/A means on the DoD checklist, common "not done" patterns | `docs/definition-of-done.md` |
-| Migration steps, barrel export examples, scaffolding a new component | `docs/component-structure.md` |
-| Setup for a new repo, troubleshooting a failing gate check | `docs/quality-gate.md` |
-| Suffix vocabulary, 4-criterion naming test, category patterns | `docs/naming-conventions.md` |
-| Three-tier doc architecture, zero-personal-data rule, story conventions | `docs/documentation-strategy.md` |
-| sx array-safety, `...other` passthrough, icon slots, `shouldForwardProp` | `docs/component-api-contract.md` |
-| WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule | `docs/accessibility.md` |
-| Vitest patterns, style test pattern, coverage requirements, mock rules | `docs/testing.md` |
+| You need                                                                 | Fetch this doc                      |
+| ------------------------------------------------------------------------ | ----------------------------------- |
+| What to look for when reviewing a PR (priority order, full checklist)    | `docs/code-review-guide.md`         |
+| Real ✅/❌/⚠️/⏸️ response examples, edge cases for review threads        | `docs/pr-review-workflow.md`        |
+| Gray area decisions on what requires approval vs what AI can do freely   | `docs/ai-collaboration-protocol.md` |
+| What N/A means on the DoD checklist, common "not done" patterns          | `docs/definition-of-done.md`        |
+| Migration steps, barrel export examples, scaffolding a new component     | `docs/component-structure.md`       |
+| Setup for a new repo, troubleshooting a failing gate check               | `docs/quality-gate.md`              |
+| Suffix vocabulary, 4-criterion naming test, category patterns            | `docs/naming-conventions.md`        |
+| Three-tier doc architecture, zero-personal-data rule, story conventions  | `docs/documentation-strategy.md`    |
+| sx array-safety, `...other` passthrough, icon slots, `shouldForwardProp` | `docs/component-api-contract.md`    |
+| WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule           | `docs/accessibility.md`             |
+| Vitest patterns, style test pattern, coverage requirements, mock rules   | `docs/testing.md`                   |
 
 Raw base URL for expanded docs:
 `https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/docs/<filename>`
@@ -57,9 +57,9 @@ Raw base URL for expanded docs:
 
 Use these commands in any AI chat session to start a specific workflow:
 
-| Command | What it does | Full procedure |
-|---|---|---|
-| `review pr <N>` | Perform an initial code review: read every changed file, check against §5–§11, submit findings via the GitHub reviews API with inline comments. | `docs/code-review-guide.md` |
+| Command                 | What it does                                                                                                                                                                      | Full procedure               |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `review pr <N>`         | Perform an initial code review: read every changed file, check against §5–§11, submit findings via the GitHub reviews API with inline comments.                                   | `docs/code-review-guide.md`  |
 | `respond pr review <N>` | Respond to an existing Copilot review: gather all threads, triage each one (✅ / ❌ / ⚠️ / ⏸️), fix valid issues in one batch commit, post follow-up replies with the commit SHA. | `docs/pr-review-workflow.md` |
 
 These two commands are distinct. `review pr <N>` makes you the reviewer. `respond pr review <N>` makes you the branch owner's assistant working through Copilot's threads.
@@ -124,31 +124,31 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 
 ### 2.1 — Branch naming
 
-| Prefix | Commit type | When |
-|---|---|---|
-| `feature/` | `feature` | New functionality |
-| `fix/` | `fix` | Bug fixes |
-| `chore/` | `chore` | Tooling, config, build, dependencies |
-| `docs/` | `docs` | Documentation only |
-| `data/` | `data` | Data-only changes (no logic, no config) |
-| `refactor/` | `refactor` | Code restructure with no behaviour change |
-| `test/` | `test` | Adding or updating tests only |
-| `style/` | `style` | Formatting, white-space (no logic change) |
+| Prefix      | Commit type | When                                      |
+| ----------- | ----------- | ----------------------------------------- |
+| `feature/`  | `feature`   | New functionality                         |
+| `fix/`      | `fix`       | Bug fixes                                 |
+| `chore/`    | `chore`     | Tooling, config, build, dependencies      |
+| `docs/`     | `docs`      | Documentation only                        |
+| `data/`     | `data`      | Data-only changes (no logic, no config)   |
+| `refactor/` | `refactor`  | Code restructure with no behaviour change |
+| `test/`     | `test`      | Adding or updating tests only             |
+| `style/`    | `style`     | Formatting, white-space (no logic change) |
 
 ### 2.2 — Commit conventions (Conventional Commits)
 
 Format: `<type>(<scope>): <description>`
 
-| Type | When |
-|---|---|
-| `feature` | New feature |
-| `fix` | Bug fix |
-| `chore` | Tooling, config, build, deps |
-| `docs` | Documentation only |
-| `data` | Data-only changes (no logic, no config) |
-| `refactor` | Code change with no behaviour change |
-| `test` | Adding or updating tests |
-| `style` | Formatting, white-space (no logic change) |
+| Type       | When                                      |
+| ---------- | ----------------------------------------- |
+| `feature`  | New feature                               |
+| `fix`      | Bug fix                                   |
+| `chore`    | Tooling, config, build, deps              |
+| `docs`     | Documentation only                        |
+| `data`     | Data-only changes (no logic, no config)   |
+| `refactor` | Code change with no behaviour change      |
+| `test`     | Adding or updating tests                  |
+| `style`    | Formatting, white-space (no logic change) |
 
 - Subject line ≤ 72 characters, imperative mood.
 - Every commit on a branch must be **related to that branch's stated purpose**.
@@ -177,16 +177,16 @@ npm run check:verify   # read-only — no auto-fix (used in CI and pre-push)
 
 ### 3.2 — Checks (in order)
 
-| Step | Tool | What it catches |
-|---|---|---|
-| 0a | Banned content scan | Proprietary identifier names in `src/`; internal project references in `src/` and `docs/`. Full list in the private AGENTS.md (§12). |
-| 0b | Structure check | Flat component files under layer folders |
-| 1 | Prettier | Formatting |
-| 2 | ESLint `--max-warnings 0` | react-hooks, unused-imports, TypeScript rules |
-| 3 | `tsc --noEmit` | Type errors |
-| 4 | Vitest | Unit tests |
-| 5 | tsup build | Library compilation and tree-shaking |
-| 6 | Storybook build | Broken stories (CI only; opt-in locally with `--storybook`) |
+| Step | Tool                      | What it catches                                                                                                                      |
+| ---- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 0a   | Banned content scan       | Proprietary identifier names in `src/`; internal project references in `src/` and `docs/`. Full list in the private AGENTS.md (§12). |
+| 0b   | Structure check           | Flat component files under layer folders                                                                                             |
+| 1    | Prettier                  | Formatting                                                                                                                           |
+| 2    | ESLint `--max-warnings 0` | react-hooks, unused-imports, TypeScript rules                                                                                        |
+| 3    | `tsc --noEmit`            | Type errors                                                                                                                          |
+| 4    | Vitest                    | Unit tests                                                                                                                           |
+| 5    | tsup build                | Library compilation and tree-shaking                                                                                                 |
+| 6    | Storybook build           | Broken stories (CI only; opt-in locally with `--storybook`)                                                                          |
 
 Steps 0a and 0b only apply in repos that include those scripts. If `scripts/check-banned-content.js` or `scripts/check-structure.js` are absent, skip those steps.
 
@@ -270,6 +270,7 @@ EOF
 - Required even when there are no findings — submit with an empty `comments` array
 
 Every review body must close with:
+
 ```
 ---
 *Review by <GitHub username> · in collaboration with <model name>*
@@ -300,12 +301,12 @@ gh api --method POST \
   -f body="<response>"
 ```
 
-| Verdict | Format |
-|---|---|
-| Valid | `✅ Valid. [reason] Will fix in the batch commit — [what changes].` |
-| Not valid | `❌ Not valid. [why the concern does not apply here.]` |
+| Verdict         | Format                                                                            |
+| --------------- | --------------------------------------------------------------------------------- |
+| Valid           | `✅ Valid. [reason] Will fix in the batch commit — [what changes].`               |
+| Not valid       | `❌ Not valid. [why the concern does not apply here.]`                            |
 | Partially valid | `⚠️ Partially valid. [what is right / what is wrong]. Will fix [the valid part].` |
-| Needs context | `⏸️ Needs branch owner input. [what is missing]. Holding this fix.` |
+| Needs context   | `⏸️ Needs branch owner input. [what is missing]. Holding this fix.`               |
 
 **2.3 — Security and WCAG comments are always valid**
 
@@ -448,13 +449,13 @@ Before naming a component: (1) is the name a noun describing what it renders? (2
 
 ### 7.3 — Casing rules
 
-| Thing | Convention |
-|---|---|
-| Folder / file | kebab-case |
-| React component | PascalCase |
-| Props interface | PascalCase + `Props` suffix |
-| Hook | camelCase starting with `use` |
-| Constant | SCREAMING_SNAKE_CASE |
+| Thing           | Convention                    |
+| --------------- | ----------------------------- |
+| Folder / file   | kebab-case                    |
+| React component | PascalCase                    |
+| Props interface | PascalCase + `Props` suffix   |
+| Hook            | camelCase starting with `use` |
+| Constant        | SCREAMING_SNAKE_CASE          |
 
 ### 7.4 — Hook naming
 
@@ -466,10 +467,10 @@ Files: `use-<name>.ts`. Exported function: `use<Name>`.
 
 ### 8.1 — Three tiers
 
-| Tier | Location | Audience |
-|---|---|---|
-| JSDoc | Source `.tsx` / `.ts` | IntelliSense, API consumers |
-| Story JSDoc | `.stories.tsx` | Storybook, designers, QA |
+| Tier                | Location               | Audience                       |
+| ------------------- | ---------------------- | ------------------------------ |
+| JSDoc               | Source `.tsx` / `.ts`  | IntelliSense, API consumers    |
+| Story JSDoc         | `.stories.tsx`         | Storybook, designers, QA       |
 | Docusaurus / README | `docs/` or `README.md` | Onboarding, external consumers |
 
 Tiers do not duplicate each other. If information belongs in Tier 1, it is not copy-pasted into Tier 3.
@@ -545,6 +546,7 @@ Mock at module boundaries only. Never mock a function that lives in the same pac
 ## 11. Definition of Done
 
 ### Code
+
 - [ ] Quality gate fully green (`npm run check:verify`)
 - [ ] No commented-out code, `console.log`, `TODO`, or `FIXME`
 - [ ] Component structure rules satisfied
@@ -555,6 +557,7 @@ Mock at module boundaries only. Never mock a function that lives in the same pac
 - [ ] No personal data in stories, tests, or docs
 
 ### PR
+
 - [ ] Title: `<type>(<scope>): <desc>` ≤ 72 chars
 - [ ] Description: What / Why / Type / Checklist / Notes filled
 - [ ] All review threads responded to
@@ -562,6 +565,7 @@ Mock at module boundaries only. Never mock a function that lives in the same pac
 - [ ] No threads resolved by AI
 
 ### Docs & security
+
 - [ ] Public-facing changes reflected in `docs/`
 - [ ] No banned identifiers or private refs
 - [ ] Security and accessibility comments addressed
@@ -582,4 +586,4 @@ If working in any public LittleBranches repository, load **both** barrels before
 
 ---
 
-*LittleBranches · MIT License*
+_LittleBranches · MIT License_

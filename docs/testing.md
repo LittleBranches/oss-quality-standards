@@ -52,7 +52,7 @@ import { MetricCard } from './metric-card';
 
 it('renders the value and label', () => {
   const html = renderToStaticMarkup(
-    React.createElement(MetricCard, { value: 42, label: 'Sessions' })
+    React.createElement(MetricCard, { value: 42, label: 'Sessions' }),
   );
   expect(html).toContain('42');
   expect(html).toContain('Sessions');
@@ -148,14 +148,14 @@ Test descriptions must be readable as plain English. Use `it('verb phrase', ...)
 
 ```ts
 // ✅ correct
-it('renders the label when provided')
-it('hides the trend indicator when trend is undefined')
-it('forwards ref to the root Card element')
+it('renders the label when provided');
+it('hides the trend indicator when trend is undefined');
+it('forwards ref to the root Card element');
 
 // ❌ wrong
-it('test1')
-it('MetricCard')
-it('should work correctly')
+it('test1');
+it('MetricCard');
+it('should work correctly');
 ```
 
 Nested `describe` blocks are fine for grouping by prop or behaviour, but do not nest more than two levels deep.
@@ -166,13 +166,13 @@ Nested `describe` blocks are fine for grouping by prop or behaviour, but do not 
 
 Every component must have tests for:
 
-| Scenario | Why |
-|---|---|
-| Renders without crashing (smoke test) | Catches import errors and fatal rendering bugs |
-| Required props render expected output | Verifies the core contract |
-| Optional props: each variant changes output | Prevents silent regressions on variant props |
-| `...other` / `data-*` passthrough | Confirms the API contract is upheld |
-| `ref` forwarding (if forwardRef is used) | Confirms the ref reaches the DOM node |
+| Scenario                                    | Why                                            |
+| ------------------------------------------- | ---------------------------------------------- |
+| Renders without crashing (smoke test)       | Catches import errors and fatal rendering bugs |
+| Required props render expected output       | Verifies the core contract                     |
+| Optional props: each variant changes output | Prevents silent regressions on variant props   |
+| `...other` / `data-*` passthrough           | Confirms the API contract is upheld            |
+| `ref` forwarding (if forwardRef is used)    | Confirms the ref reaches the DOM node          |
 
 If a component has conditional rendering logic, each branch needs a test case.
 

@@ -1,5 +1,5 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
+import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
@@ -31,8 +31,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl:
-            'https://github.com/LittleBranches/oss-quality-standards/tree/main/',
+          editUrl: 'https://github.com/LittleBranches/oss-quality-standards/tree/main/',
         },
         blog: false,
         theme: {
@@ -73,10 +72,10 @@ const config: Config = {
         {
           title: 'Standards',
           items: [
-            {label: 'Overview', to: '/docs/intro'},
-            {label: 'PR Review Workflow', to: '/docs/pr-review-workflow'},
-            {label: 'Definition of Done', to: '/docs/definition-of-done'},
-            {label: 'AI Collaboration Protocol', to: '/docs/ai-collaboration-protocol'},
+            { label: 'Overview', to: '/docs/intro' },
+            { label: 'PR Review Workflow', to: '/docs/pr-review-workflow' },
+            { label: 'Definition of Done', to: '/docs/definition-of-done' },
+            { label: 'AI Collaboration Protocol', to: '/docs/ai-collaboration-protocol' },
           ],
         },
         {

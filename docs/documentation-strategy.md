@@ -64,14 +64,14 @@ export interface MetricCardProps extends CardProps {
 
 ### JSDoc rules for MUI component props
 
-| Situation | Rule |
-|---|---|
-| Prop inherited from MUI | No JSDoc — never redeclare |
-| Own prop, purpose obvious from name | No JSDoc |
-| Own prop, non-obvious behaviour | One-line JSDoc max |
-| Own prop with a default value | Add `@default value` tag |
-| Own prop with a safety constraint | Add the constraint in the JSDoc |
-| Component function | One-sentence JSDoc explaining what problem it solves |
+| Situation                           | Rule                                                 |
+| ----------------------------------- | ---------------------------------------------------- |
+| Prop inherited from MUI             | No JSDoc — never redeclare                           |
+| Own prop, purpose obvious from name | No JSDoc                                             |
+| Own prop, non-obvious behaviour     | One-line JSDoc max                                   |
+| Own prop with a default value       | Add `@default value` tag                             |
+| Own prop with a safety constraint   | Add the constraint in the JSDoc                      |
+| Component function                  | One-sentence JSDoc explaining what problem it solves |
 
 Never write multi-line JSDoc blocks. One line is almost always enough.
 If an explanation takes more than one sentence, the component API is probably wrong.
@@ -143,12 +143,12 @@ Docusaurus docs are for conceptual guides that span multiple components or addre
 
 ## Ownership rules
 
-| Tier | Owned by | Reviewed in |
-|---|---|---|
-| JSDoc | Component author | PR code review |
-| Story JSDoc | Component author + designer | PR code review + Storybook preview |
-| README | Repository maintainer | PR code review |
-| Docusaurus docs | Repository maintainer | PR code review |
+| Tier            | Owned by                    | Reviewed in                        |
+| --------------- | --------------------------- | ---------------------------------- |
+| JSDoc           | Component author            | PR code review                     |
+| Story JSDoc     | Component author + designer | PR code review + Storybook preview |
+| README          | Repository maintainer       | PR code review                     |
+| Docusaurus docs | Repository maintainer       | PR code review                     |
 
 When a PR changes a component's public API (new or removed props, changed prop types), the author must update Tier 1 (JSDoc) in the same PR. Tier 3 updates are required only for breaking changes or significant new features visible to consumers.
 
@@ -166,14 +166,14 @@ Stories, tests, JSDoc `@example` blocks, and any documentation file must NEVER c
 
 **Safe placeholders:**
 
-| Category | Placeholder |
-|---|---|
-| Person name | `Jane Doe`, `John Smith`, `Alex K.` |
-| Email | `jane@example.com`, `hello@example.com` |
-| Company | `Acme Corp`, `Example Inc.` |
-| Currency value | `$1,234`, `€42.00` |
-| User ID | `user-001`, `usr_abc123` |
-| Phone | `+1 555-000-0000` |
+| Category       | Placeholder                             |
+| -------------- | --------------------------------------- |
+| Person name    | `Jane Doe`, `John Smith`, `Alex K.`     |
+| Email          | `jane@example.com`, `hello@example.com` |
+| Company        | `Acme Corp`, `Example Inc.`             |
+| Currency value | `$1,234`, `€42.00`                      |
+| User ID        | `user-001`, `usr_abc123`                |
+| Phone          | `+1 555-000-0000`                       |
 
 Violations found in a PR are treated as blocking — same severity as a security finding. They do not ship.
 
@@ -202,16 +202,16 @@ export const Default: Story = { args: { ... } };
 
 Every component must have at least:
 
-| Story | Purpose |
-|---|---|
-| `Default` | The minimal working state with only required props |
+| Story                             | Purpose                                            |
+| --------------------------------- | -------------------------------------------------- |
+| `Default`                         | The minimal working state with only required props |
 | One story per significant variant | Each variant documented in JSDoc must have a story |
 
 Optional but encouraged:
 
-| Story | Purpose |
-|---|---|
-| `Playground` | All props exposed as controls |
+| Story        | Purpose                                    |
+| ------------ | ------------------------------------------ |
+| `Playground` | All props exposed as controls              |
 | `Edge cases` | Empty state, very long text, loading state |
 
 ### Story naming rules
