@@ -216,6 +216,64 @@ Accepted suggestions that are applied via the GitHub UI create a commit directly
 If this happens, squash that commit into the fix batch commit before pushing — do not leave
 an orphaned single-suggestion commit in the branch history.
 
+### 2.6 — Deferred comments: valid but out of scope for this PR
+
+> If the deferred comment arrived as a GitHub Suggested Change block (§2.5), reject it in the
+> thread and open a tracking issue here rather than leaving an unresolved suggestion.
+
+Some valid reviewer comments flag work that cannot be done in the current PR — the change is
+premature (stubs without implementations to validate against), out of scope (a different concern
+than the branch's stated purpose), or blocked by another open PR. When work is blocked by another
+PR, include that PR's number in the tracking issue — it surfaces as a cross-reference and makes
+the deferred work easy to pick up once the blocker merges. These must **not** be left as
+unresolved thread replies — acknowledgement text in a comment gets lost when the PR closes.
+
+**Rule: always open a GitHub Issue for deferred work, then link to it from the thread.**
+
+**Step 1 — Open the issue:**
+
+```sh
+gh issue create \
+  --title "<type>: <concise description of the deferred work>" \
+  --body "$(cat <<'EOF'
+## Context
+
+Deferred from PR #<N>.
+
+[Why this cannot be done in this PR.]
+
+## Action
+
+[Concrete steps to complete the work when the time comes.]
+
+## Related
+
+- PR #<N>: <url>
+EOF
+)"
+```
+
+**Step 2 — Reply in the thread:**
+
+```
+⏭️ Valid but deferred. [One sentence explaining why this cannot be done in this PR.]
+Tracked in #<issue-number>.
+```
+
+The thread stays **unresolved** until the branch owner in Phase 5 confirms the issue was opened
+and the link is present.
+
+This keeps the PR thread self-documenting (one line, clickable issue reference) and moves
+the full rationale to an Issue that is:
+
+- **Searchable** and **linkable** from future PRs and roadmap entries.
+- **Closeable** — closing the issue is the natural completion signal.
+- **Visible in the backlog**, unlike acknowledgement text in a closed PR thread.
+
+**Deferred ≠ dismissed.** Never use "deferred" to avoid a valid critique. If the deferred
+work will genuinely never be done, use `❌ Won't fix` and explain why in the thread — do not
+open a tracking issue for work you are intentionally rejecting.
+
 ---
 
 ## Phase 3 — Fixing valid comments (one batch)
@@ -345,7 +403,7 @@ The branch owner:
 ```
 Phase 0  → branch hygiene + quality gate (before green light)
 Phase 1  → green light → create PR → trigger Copilot review
-Phase 2  → read ALL threads → respond one-by-one (✅ / ❌ / ⚠️ / ⏸️) → handle suggestion blocks
+Phase 2  → read ALL threads → respond one-by-one (✅ / ❌ / ⚠️ / ⏸️ / ⏭️) → handle suggestion blocks → open Issues for deferred work
 Phase 3  → fix all valid issues → quality gate → one batch commit → one push → follow-up replies (SHA)
 Phase 4  → threads stay UNRESOLVED → update PR description if scope changed
 Phase 5  → branch owner verifies, resolves, merges

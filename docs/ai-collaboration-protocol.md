@@ -20,11 +20,11 @@ Without a protocol, the AI's permission boundary shifts every session. One sessi
 
 Authorization stands for exactly what was asked — not beyond it.
 
-| What was said | What is authorized | What is NOT authorized |
-|---|---|---|
-| "push this branch" | `git push origin <branch>` | force-push, push to main, push other branches |
-| "commit the changes" | one commit of the current staged changes | amending, committing unrelated files |
-| "create the PR" | `gh pr create` for this branch | merging, closing, tagging |
+| What was said        | What is authorized                       | What is NOT authorized                        |
+| -------------------- | ---------------------------------------- | --------------------------------------------- |
+| "push this branch"   | `git push origin <branch>`               | force-push, push to main, push other branches |
+| "commit the changes" | one commit of the current staged changes | amending, committing unrelated files          |
+| "create the PR"      | `gh pr create` for this branch           | merging, closing, tagging                     |
 
 When in doubt, do less and ask. The cost of an unnecessary question is one message. The cost of an unwanted action (deleted branch, force-pushed history, unintended merge) can be hours of recovery work.
 
@@ -64,7 +64,7 @@ Do not run `npm install <package>` without listing the package and its purpose f
 
 Thread resolution is the branch owner's sign-off mechanism. A resolved thread is a signal that the branch owner has read the fix, verified it, and approved it. If the AI resolves its own threads, that signal is lost — the branch owner can no longer quickly see what still needs verification.
 
-This is different from *replying* to a thread, which the AI does freely. The distinction:
+This is different from _replying_ to a thread, which the AI does freely. The distinction:
 
 - **Reply** = AI communicates what it did
 - **Resolve** = branch owner confirms it is correct

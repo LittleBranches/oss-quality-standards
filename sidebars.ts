@@ -1,4 +1,4 @@
-import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
+import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
   standardsSidebar: [
@@ -66,6 +66,11 @@ const sidebars: SidebarsConfig = {
       type: 'doc',
       id: 'testing',
       label: 'Testing',
+    },
+    {
+      type: 'doc',
+      id: 'roadmap',
+      label: 'Roadmap',
     },
   ],
 };
