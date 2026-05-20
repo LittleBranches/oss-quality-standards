@@ -51,6 +51,34 @@ Load: https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/mai
 
 Or simply use the universal trigger phrase at the start of each AI session.
 
+## Companion: AI Workflow Skills
+
+This repo governs **how code is written** — structure, naming, testing, accessibility, API contracts.
+
+It does not govern **how AI agents are used** — planning workflows, TDD loops, grilling sessions,
+architecture reviews, and context building. That is a separate concern handled by agent skills.
+
+A curated set of skills (slash commands for Claude Code and other agents) is maintained at
+[AlexRebula/skills](https://github.com/AlexRebula/skills), a fork of
+[mattpocock/skills](https://github.com/mattpocock/skills) by
+[Matt Pocock](https://github.com/mattpocock). The fork adds giselle-mui-specific skills:
+
+| Skill | What it does |
+| --- | --- |
+| `/create-giselle-component` | Scaffold + TDD a new component following oss-quality-standards rules |
+| `/audit-giselle-tests` | Classify and fix AI-generated tests that use MUI mocking anti-patterns |
+
+Install the skills into Claude Code:
+
+```bash
+npx skills@latest add AlexRebula/skills
+```
+
+Then run `/setup-matt-pocock-skills` once per repo to configure issue tracker and domain docs.
+
+The two systems are designed to work together: quality standards set the bar; skills give
+AI agents the workflow to consistently reach it.
+
 ## License
 
-MIT © Alex Rebula
+MIT © LittleBranches
