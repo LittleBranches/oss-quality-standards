@@ -63,10 +63,10 @@ A curated set of skills (slash commands for Claude Code and other agents) is mai
 [mattpocock/skills](https://github.com/mattpocock/skills) by
 [Matt Pocock](https://github.com/mattpocock). The fork adds giselle-mui-specific skills:
 
-| Skill | What it does |
-| --- | --- |
-| `/create-giselle-component` | Scaffold + TDD a new component following oss-quality-standards rules |
-| `/audit-giselle-tests` | Classify and fix AI-generated tests that use MUI mocking anti-patterns |
+| Skill                       | What it does                                                           |
+| --------------------------- | ---------------------------------------------------------------------- |
+| `/create-giselle-component` | Scaffold + TDD a new component following oss-quality-standards rules   |
+| `/audit-giselle-tests`      | Classify and fix AI-generated tests that use MUI mocking anti-patterns |
 
 Install the skills into Claude Code:
 
