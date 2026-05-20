@@ -188,8 +188,11 @@ npm run check:verify   # read-only — no auto-fix (used in CI and pre-push)
 | 4    | Vitest                    | Unit tests                                                                                                                           |
 | 5    | tsup build                | Library compilation and tree-shaking                                                                                                 |
 | 6    | Storybook build           | Broken stories (CI only; opt-in locally with `--storybook`)                                                                          |
+| 7    | `npm audit --audit-level=high` | High and critical dependency vulnerabilities (CI only; run manually with `npm audit` when adding or updating dependencies)      |
 
 Steps 0a and 0b only apply in repos that include those scripts. If `scripts/check-banned-content.js` or `scripts/check-structure.js` are absent, skip those steps.
+
+Step 7 (`npm audit`) is CI-only and is not part of the pre-push hook. Run it manually whenever a dependency is added or updated, or when the CI report flags a vulnerability.
 
 ### 3.3 — When AI must NOT run the gate
 
@@ -376,7 +379,8 @@ Every component folder exposes a single `index.ts`. Consumers import from the fo
 ### 5.4 — Naming conventions
 
 - Folder: kebab-case (`metric-card/`)
-- Main file: `<name>.tsx` (or `.ts` for non-JSX)
+- Main file: `<name>.tsx` (or role-based for deep nesting — see §5.5)
+- Types: `types.ts` — props interface always in a separate file, never inline in the component
 - Barrel: `index.ts`
 - Tests: `<name>.test.ts`
 - Style tests: `<name>.styles.test.ts`
@@ -387,6 +391,35 @@ Every component folder exposes a single `index.ts`. Consumers import from the fo
 - Utilities: `<name>.utils.ts`
 - Animations: `<name>.animations.ts`
 - Story-specific styles (rare): `<name>.stories.styles.ts`
+- Component docs: `README.md` + `roadmap.md`
+
+### 5.5 — Required component folder contents
+
+Every shipped component folder must contain:
+
+| File | Created when | Purpose |
+| --- | --- | --- |
+| `types.ts` | Scaffold | Props interface stub; filled in before `.tsx` is written |
+| `<name>.test.ts` | Scaffold | `it.todo` stubs first; replaced with real tests during TDD |
+| `README.md` | Scaffold | Why it exists, planned API, design decisions |
+| `roadmap.md` | Scaffold | Planned improvements; updated as component evolves |
+| `index.ts` | Scaffold | Stub barrel — filled in after implementation |
+| `<name>.tsx` | Implementation | Component file — its existence signals the component is implemented |
+| `<name>.stories.tsx` | Implementation | Storybook stories |
+
+Files not created until implementation begins: `.tsx`, `.styles.ts`, `.const.ts`, `.stories.tsx`.
+
+**Role-based file naming** — when a component lives 3+ folder levels deep, name the file
+after its role at that level, not the full component name:
+
+```
+src/components/inputs/button/toggle/icon/
+  icon.tsx       ← role: "icon" (not toggle-icon-button.tsx)
+  types.ts
+  index.ts
+```
+
+Shallower components use the full folder name: `metric-card.tsx`, `radial-progress-card.tsx`.
 
 ---
 
@@ -395,6 +428,14 @@ Every component folder exposes a single `index.ts`. Consumers import from the fo
 ### 6.1 — Props interface
 
 Every component's props interface must extend the MUI root component's props (or `React.HTMLAttributes` for non-MUI components). Custom props go before the spread; the props type is exported from `index.ts`.
+
+The props interface lives in `types.ts` — never inline in the component file. The barrel re-exports it:
+
+```ts
+// index.ts
+export { MyCard } from './my-card';
+export type { MyCardProps } from './types';
+```
 
 ### 6.2 — `sx` array-safety
 
@@ -435,6 +476,14 @@ Components that wrap a DOM element or MUI component must use `React.forwardRef`.
 ### 6.10 — Icon slots
 
 Accept icons as `React.ReactNode`. Decorative icons must have `aria-hidden="true"`. Icon-only buttons must have an `aria-label` on the `<button>`, not on the icon.
+
+### 6.11 — No `dangerouslySetInnerHTML`
+
+Never use `dangerouslySetInnerHTML` in any component. If HTML content must be rendered from
+a string, use a sanitisation library (e.g. DOMPurify) at the boundary before it enters the
+component tree — the component itself must never perform raw HTML injection.
+
+Any PR introducing `dangerouslySetInnerHTML` is a blocking security finding.
 
 ---
 
@@ -485,6 +534,22 @@ Violations found in PR review are blocking — same severity as a security findi
 ### 8.3 — Storybook conventions
 
 Every component must have at least a `Default` story (minimal required props) and one story per significant variant. Story names use PascalCase and do not repeat the component name (`WithTrend` not `MetricCardWithTrend`).
+
+**Story `title` must mirror the `src/components/` folder path exactly.** This is enforced
+by `scripts/check-story-titles.js` (when present). If the script is absent, enforce manually:
+
+```
+src/components/material/surfaces/card/metric/  →  'Material/Surfaces/Cards/Metric'
+src/components/chart/radial-progress/          →  'Chart/Radial Progress'
+src/components/motion/floating-side-nav/       →  'Motion/Floating Side Nav'
+src/components/section/hero/                   →  'Section/Hero'
+```
+
+Rule: **folder path = story title**. If they ever disagree, fix the story title — never the
+folder path. A model that agreed to a different title in conversation is wrong; the folder is
+the source of truth. This rule was established after an incident in PR #53 where a convention
+agreed in conversation was never written into the config file, causing silent drift when a
+different model was used in the next session.
 
 ---
 
@@ -595,6 +660,12 @@ content that would cause harm if made public.
 
 **Implementation details** (which tool, which paths, key storage) are project-specific
 and belong in the private extension — not here.
+
+> **If the private extension is not loaded:** treat all files in the repo as unencrypted,
+> regardless of folder name or apparent sensitivity. Do not assume encryption is configured.
+> Do not write, move, or advise committing any file that matches the sensitive data categories
+> above until the private extension is loaded and the encrypted paths are confirmed.
+> Flag this gap to the branch owner immediately.
 
 ---
 
