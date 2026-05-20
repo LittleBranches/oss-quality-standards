@@ -485,6 +485,63 @@ component tree — the component itself must never perform raw HTML injection.
 
 Any PR introducing `dangerouslySetInnerHTML` is a blocking security finding.
 
+### 6.12 — Input component security
+
+Input components (anything in the `inputs/` layer, or any component that accepts user-typed
+content) must meet all of the following requirements. Violations are blocking security findings.
+
+**URL props — block `javascript:` scheme**
+
+Any prop that accepts a URL (`href`, `src`, `action`, `formAction`) must reject the
+`javascript:` scheme. Validate at the component boundary before passing to the DOM:
+
+```ts
+function isSafeUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url, window.location.href);
+    return parsed.protocol !== 'javascript:';
+  } catch {
+    return false;
+  }
+}
+```
+
+If the prop value fails this check, render nothing or `'#'` and log a warning in development.
+
+**`...other` on sensitive elements**
+
+The `...other` spread is required for passthrough (§6.3), but on elements that load external
+content (`<img>`, `<iframe>`, `<video>`, `<audio>`), `onError` and `onLoad` handlers from
+`other` can be used to trigger code. For those elements:
+
+- Accept `...other` as normal — do not block it
+- Add a JSDoc note on the props interface warning consumers that event handlers on external
+  content elements are their responsibility to sanitize
+
+**Client-side validation is UX only**
+
+Validation inside a component (min/max, pattern, required) is for user experience only.
+It is never a security boundary. Components must never document or imply that their
+validation prevents malicious input from reaching the server.
+
+**Sensitive input types**
+
+Password fields: must use `type="password"`. Must not expose the value in `data-*` attributes,
+ARIA attributes, or any other DOM attribute that development tools or screen readers could
+surface unintentionally.
+
+**CSS injection via `sx`**
+
+The `sx` prop must never accept raw user-provided strings as property values. Style values
+derived from user input must be validated against an allowlist of safe values before being
+passed into `sx`.
+
+**OWASP reference**
+
+For the complete front-end security checklist, consult:
+[OWASP Top 10](https://owasp.org/www-project-top-ten/) and
+[OWASP Testing Guide — Client-Side Testing](https://owasp.org/www-project-web-security-testing-guide/)
+
 ---
 
 ## 7. Naming Conventions
@@ -618,6 +675,8 @@ Mock at module boundaries only. Never mock a function that lives in the same pac
 - [ ] Component structure rules satisfied
 - [ ] Component API contract satisfied (sx array-safety, `...other`, no bare `<Box>`, etc.)
 - [ ] No hardcoded colours
+- [ ] No `dangerouslySetInnerHTML` (§6.11)
+- [ ] Input components: URL props validated, client-side validation not used as security boundary (§6.12)
 - [ ] No new undisclosed dependencies
 - [ ] No secrets in committed files
 - [ ] No personal data in stories, tests, or docs
@@ -660,12 +719,6 @@ content that would cause harm if made public.
 
 **Implementation details** (which tool, which paths, key storage) are project-specific
 and belong in the private extension — not here.
-
-> **If the private extension is not loaded:** treat all files in the repo as unencrypted,
-> regardless of folder name or apparent sensitivity. Do not assume encryption is configured.
-> Do not write, move, or advise committing any file that matches the sensitive data categories
-> above until the private extension is loaded and the encrypted paths are confirmed.
-> Flag this gap to the branch owner immediately.
 
 ---
 
