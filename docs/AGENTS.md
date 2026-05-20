@@ -178,18 +178,21 @@ npm run check:verify   # read-only — no auto-fix (used in CI and pre-push)
 
 ### 3.2 — Checks (in order)
 
-| Step | Tool                      | What it catches                                                                                                                      |
-| ---- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 0a   | Banned content scan       | Proprietary identifier names in `src/`; internal project references in `src/` and `docs/`. Full list in the private AGENTS.md (§12). |
-| 0b   | Structure check           | Flat component files under layer folders                                                                                             |
-| 1    | Prettier                  | Formatting                                                                                                                           |
-| 2    | ESLint `--max-warnings 0` | react-hooks, unused-imports, TypeScript rules                                                                                        |
-| 3    | `tsc --noEmit`            | Type errors                                                                                                                          |
-| 4    | Vitest                    | Unit tests                                                                                                                           |
-| 5    | tsup build                | Library compilation and tree-shaking                                                                                                 |
-| 6    | Storybook build           | Broken stories (CI only; opt-in locally with `--storybook`)                                                                          |
+| Step | Tool                           | What it catches                                                                                                                      |
+| ---- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 0a   | Banned content scan            | Proprietary identifier names in `src/`; internal project references in `src/` and `docs/`. Full list in the private AGENTS.md (§12). |
+| 0b   | Structure check                | Flat component files under layer folders                                                                                             |
+| 1    | Prettier                       | Formatting                                                                                                                           |
+| 2    | ESLint `--max-warnings 0`      | react-hooks, unused-imports, TypeScript rules                                                                                        |
+| 3    | `tsc --noEmit`                 | Type errors                                                                                                                          |
+| 4    | Vitest                         | Unit tests                                                                                                                           |
+| 5    | tsup build                     | Library compilation and tree-shaking                                                                                                 |
+| 6    | Storybook build                | Broken stories (CI only; opt-in locally with `--storybook`)                                                                          |
+| 7    | `npm audit --audit-level=high` | High and critical dependency vulnerabilities (CI only; run manually with `npm audit` when adding or updating dependencies)           |
 
 Steps 0a and 0b only apply in repos that include those scripts. If `scripts/check-banned-content.js` or `scripts/check-structure.js` are absent, skip those steps.
+
+Step 7 (`npm audit`) is CI-only and is not part of the pre-push hook. Run it manually whenever a dependency is added or updated, or when the CI report flags a vulnerability.
 
 ### 3.3 — When AI must NOT run the gate
 
@@ -376,7 +379,8 @@ Every component folder exposes a single `index.ts`. Consumers import from the fo
 ### 5.4 — Naming conventions
 
 - Folder: kebab-case (`metric-card/`)
-- Main file: `<name>.tsx` (or `.ts` for non-JSX)
+- Main file: `<name>.tsx` (or role-based for deep nesting — see §5.5)
+- Types: `types.ts` — props interface always in a separate file, never inline in the component
 - Barrel: `index.ts`
 - Tests: `<name>.test.ts`
 - Style tests: `<name>.styles.test.ts`
@@ -387,6 +391,35 @@ Every component folder exposes a single `index.ts`. Consumers import from the fo
 - Utilities: `<name>.utils.ts`
 - Animations: `<name>.animations.ts`
 - Story-specific styles (rare): `<name>.stories.styles.ts`
+- Component docs: `README.md` + `roadmap.md`
+
+### 5.5 — Required component folder contents
+
+Every shipped component folder must contain:
+
+| File                 | Created when   | Purpose                                                             |
+| -------------------- | -------------- | ------------------------------------------------------------------- |
+| `types.ts`           | Scaffold       | Props interface stub; filled in before `.tsx` is written            |
+| `<name>.test.ts`     | Scaffold       | `it.todo` stubs first; replaced with real tests during TDD          |
+| `README.md`          | Scaffold       | Why it exists, planned API, design decisions                        |
+| `roadmap.md`         | Scaffold       | Planned improvements; updated as component evolves                  |
+| `index.ts`           | Scaffold       | Stub barrel — filled in after implementation                        |
+| `<name>.tsx`         | Implementation | Component file — its existence signals the component is implemented |
+| `<name>.stories.tsx` | Implementation | Storybook stories                                                   |
+
+Files not created until implementation begins: `.tsx`, `.styles.ts`, `.const.ts`, `.stories.tsx`.
+
+**Role-based file naming** — when a component lives 3+ folder levels deep, name the file
+after its role at that level, not the full component name:
+
+```
+src/components/inputs/button/toggle/icon/
+  icon.tsx       ← role: "icon" (not toggle-icon-button.tsx)
+  types.ts
+  index.ts
+```
+
+Shallower components use the full folder name: `metric-card.tsx`, `radial-progress-card.tsx`.
 
 ---
 
@@ -395,6 +428,14 @@ Every component folder exposes a single `index.ts`. Consumers import from the fo
 ### 6.1 — Props interface
 
 Every component's props interface must extend the MUI root component's props (or `React.HTMLAttributes` for non-MUI components). Custom props go before the spread; the props type is exported from `index.ts`.
+
+The props interface lives in `types.ts` — never inline in the component file. The barrel re-exports it:
+
+```ts
+// index.ts
+export { MyCard } from './my-card';
+export type { MyCardProps } from './types';
+```
 
 ### 6.2 — `sx` array-safety
 
@@ -435,6 +476,71 @@ Components that wrap a DOM element or MUI component must use `React.forwardRef`.
 ### 6.10 — Icon slots
 
 Accept icons as `React.ReactNode`. Decorative icons must have `aria-hidden="true"`. Icon-only buttons must have an `aria-label` on the `<button>`, not on the icon.
+
+### 6.11 — No `dangerouslySetInnerHTML`
+
+Never use `dangerouslySetInnerHTML` in any component. If HTML content must be rendered from
+a string, use a sanitisation library (e.g. DOMPurify) at the boundary before it enters the
+component tree — the component itself must never perform raw HTML injection.
+
+Any PR introducing `dangerouslySetInnerHTML` is a blocking security finding.
+
+### 6.12 — Input component security
+
+Input components (anything in the `inputs/` layer, or any component that accepts user-typed
+content) must meet all of the following requirements. Violations are blocking security findings.
+
+**URL props — block `javascript:` scheme**
+
+Any prop that accepts a URL (`href`, `src`, `action`, `formAction`) must reject the
+`javascript:` scheme. Validate at the component boundary before passing to the DOM:
+
+```ts
+function isSafeUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url, window.location.href);
+    return parsed.protocol !== 'javascript:';
+  } catch {
+    return false;
+  }
+}
+```
+
+If the prop value fails this check, render nothing or `'#'` and log a warning in development.
+
+**`...other` on sensitive elements**
+
+The `...other` spread is required for passthrough (§6.3), but on elements that load external
+content (`<img>`, `<iframe>`, `<video>`, `<audio>`), `onError` and `onLoad` handlers from
+`other` can be used to trigger code. For those elements:
+
+- Accept `...other` as normal — do not block it
+- Add a JSDoc note on the props interface warning consumers that event handlers on external
+  content elements are their responsibility to sanitize
+
+**Client-side validation is UX only**
+
+Validation inside a component (min/max, pattern, required) is for user experience only.
+It is never a security boundary. Components must never document or imply that their
+validation prevents malicious input from reaching the server.
+
+**Sensitive input types**
+
+Password fields: must use `type="password"`. Must not expose the value in `data-*` attributes,
+ARIA attributes, or any other DOM attribute that development tools or screen readers could
+surface unintentionally.
+
+**CSS injection via `sx`**
+
+The `sx` prop must never accept raw user-provided strings as property values. Style values
+derived from user input must be validated against an allowlist of safe values before being
+passed into `sx`.
+
+**OWASP reference**
+
+For the complete front-end security checklist, consult:
+[OWASP Top 10](https://owasp.org/www-project-top-ten/) and
+[OWASP Testing Guide — Client-Side Testing](https://owasp.org/www-project-web-security-testing-guide/)
 
 ---
 
@@ -485,6 +591,22 @@ Violations found in PR review are blocking — same severity as a security findi
 ### 8.3 — Storybook conventions
 
 Every component must have at least a `Default` story (minimal required props) and one story per significant variant. Story names use PascalCase and do not repeat the component name (`WithTrend` not `MetricCardWithTrend`).
+
+**Story `title` must mirror the `src/components/` folder path exactly.** This is enforced
+by `scripts/check-story-titles.js` (when present). If the script is absent, enforce manually:
+
+```
+src/components/material/surfaces/card/metric/  →  'Material/Surfaces/Cards/Metric'
+src/components/chart/radial-progress/          →  'Chart/Radial Progress'
+src/components/motion/floating-side-nav/       →  'Motion/Floating Side Nav'
+src/components/section/hero/                   →  'Section/Hero'
+```
+
+Rule: **folder path = story title**. If they ever disagree, fix the story title — never the
+folder path. A model that agreed to a different title in conversation is wrong; the folder is
+the source of truth. This rule was established after an incident in PR #53 where a convention
+agreed in conversation was never written into the config file, causing silent drift when a
+different model was used in the next session.
 
 ---
 
@@ -553,6 +675,8 @@ Mock at module boundaries only. Never mock a function that lives in the same pac
 - [ ] Component structure rules satisfied
 - [ ] Component API contract satisfied (sx array-safety, `...other`, no bare `<Box>`, etc.)
 - [ ] No hardcoded colours
+- [ ] No `dangerouslySetInnerHTML` (§6.11)
+- [ ] Input components: URL props validated, client-side validation not used as security boundary (§6.12)
 - [ ] No new undisclosed dependencies
 - [ ] No secrets in committed files
 - [ ] No personal data in stories, tests, or docs
