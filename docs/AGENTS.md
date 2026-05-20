@@ -178,17 +178,17 @@ npm run check:verify   # read-only — no auto-fix (used in CI and pre-push)
 
 ### 3.2 — Checks (in order)
 
-| Step | Tool                      | What it catches                                                                                                                      |
-| ---- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 0a   | Banned content scan       | Proprietary identifier names in `src/`; internal project references in `src/` and `docs/`. Full list in the private AGENTS.md (§12). |
-| 0b   | Structure check           | Flat component files under layer folders                                                                                             |
-| 1    | Prettier                  | Formatting                                                                                                                           |
-| 2    | ESLint `--max-warnings 0` | react-hooks, unused-imports, TypeScript rules                                                                                        |
-| 3    | `tsc --noEmit`            | Type errors                                                                                                                          |
-| 4    | Vitest                    | Unit tests                                                                                                                           |
-| 5    | tsup build                | Library compilation and tree-shaking                                                                                                 |
-| 6    | Storybook build           | Broken stories (CI only; opt-in locally with `--storybook`)                                                                          |
-| 7    | `npm audit --audit-level=high` | High and critical dependency vulnerabilities (CI only; run manually with `npm audit` when adding or updating dependencies)      |
+| Step | Tool                           | What it catches                                                                                                                      |
+| ---- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 0a   | Banned content scan            | Proprietary identifier names in `src/`; internal project references in `src/` and `docs/`. Full list in the private AGENTS.md (§12). |
+| 0b   | Structure check                | Flat component files under layer folders                                                                                             |
+| 1    | Prettier                       | Formatting                                                                                                                           |
+| 2    | ESLint `--max-warnings 0`      | react-hooks, unused-imports, TypeScript rules                                                                                        |
+| 3    | `tsc --noEmit`                 | Type errors                                                                                                                          |
+| 4    | Vitest                         | Unit tests                                                                                                                           |
+| 5    | tsup build                     | Library compilation and tree-shaking                                                                                                 |
+| 6    | Storybook build                | Broken stories (CI only; opt-in locally with `--storybook`)                                                                          |
+| 7    | `npm audit --audit-level=high` | High and critical dependency vulnerabilities (CI only; run manually with `npm audit` when adding or updating dependencies)           |
 
 Steps 0a and 0b only apply in repos that include those scripts. If `scripts/check-banned-content.js` or `scripts/check-structure.js` are absent, skip those steps.
 
@@ -397,15 +397,15 @@ Every component folder exposes a single `index.ts`. Consumers import from the fo
 
 Every shipped component folder must contain:
 
-| File | Created when | Purpose |
-| --- | --- | --- |
-| `types.ts` | Scaffold | Props interface stub; filled in before `.tsx` is written |
-| `<name>.test.ts` | Scaffold | `it.todo` stubs first; replaced with real tests during TDD |
-| `README.md` | Scaffold | Why it exists, planned API, design decisions |
-| `roadmap.md` | Scaffold | Planned improvements; updated as component evolves |
-| `index.ts` | Scaffold | Stub barrel — filled in after implementation |
-| `<name>.tsx` | Implementation | Component file — its existence signals the component is implemented |
-| `<name>.stories.tsx` | Implementation | Storybook stories |
+| File                 | Created when   | Purpose                                                             |
+| -------------------- | -------------- | ------------------------------------------------------------------- |
+| `types.ts`           | Scaffold       | Props interface stub; filled in before `.tsx` is written            |
+| `<name>.test.ts`     | Scaffold       | `it.todo` stubs first; replaced with real tests during TDD          |
+| `README.md`          | Scaffold       | Why it exists, planned API, design decisions                        |
+| `roadmap.md`         | Scaffold       | Planned improvements; updated as component evolves                  |
+| `index.ts`           | Scaffold       | Stub barrel — filled in after implementation                        |
+| `<name>.tsx`         | Implementation | Component file — its existence signals the component is implemented |
+| `<name>.stories.tsx` | Implementation | Storybook stories                                                   |
 
 Files not created until implementation begins: `.tsx`, `.styles.ts`, `.const.ts`, `.stories.tsx`.
 
