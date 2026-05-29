@@ -1,0 +1,6 @@
+#!/bin/sh
+# Pre-push quality gate — runs on every `git push`
+# Runs: Prettier check → tsc → Docusaurus build (30–90s depending on cache)
+# Fail fast: set -e exits on the first non-zero command
+set -e
+npm run check:verify

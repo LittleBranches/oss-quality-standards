@@ -1,8 +1,3 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
-
 .heroBanner {
   padding: 4rem 0;
   text-align: center;
@@ -20,4 +15,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.trigger {
+  padding: 3rem 0;
+  text-align: center;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.triggerCode {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: var(--ifm-code-background);
+  border-radius: 8px;
+  font-size: 1rem;
+  text-align: left;
+  max-width: 100%;
+  overflow-x: auto;
 }
