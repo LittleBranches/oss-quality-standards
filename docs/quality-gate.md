@@ -124,6 +124,108 @@ Guidelines:
 
 ---
 
+## Smart gate (pre-push only)
+
+The smart gate is an opt-in mode that skips heavy steps when the changed files
+don't require them. It is **enabled by default in the pre-push hook** and always
+disabled in CI. The full gate is always used in CI regardless of flags.
+
+### How it works
+
+The gate resolves the diff with three fallbacks in order:
+
+1. **Upstream tracking branch** — `git diff --name-only @{u}...HEAD` — most precise,
+   only shows commits not yet pushed to the remote branch.
+2. **Merge-base** — `git diff --name-only $(git merge-base HEAD main)` — covers
+   squash/rebase workflows where there is no upstream tracking branch.
+3. **Fallback** — diff resolution failed; the full gate runs as a safe default.
+
+Once the diff is known, each heavy step is evaluated independently:
+
+| Step            | Triggered when                                                                       |
+| --------------- | ------------------------------------------------------------------------------------ |
+| Tests           | Any `src/` file changed (targeted by co-located `.test.ts`; full suite if >25 files) |
+| tsup build      | `src/`, `tsup.config.ts`, `tsconfig.json`, or `package.json` changed                 |
+| Storybook build | `src/`, `*.stories.tsx`, or `.storybook/` changed                                    |
+
+Core static checks (banned content, structure, prettier, eslint, tsc) always run.
+
+### Flags
+
+| Flag            | Effect                                                   |
+| --------------- | -------------------------------------------------------- |
+| `--smart`       | Enable smart mode (skip untriggered heavy steps)         |
+| `--full`        | Force full gate (overrides `--smart`)                    |
+| `--log-metrics` | Append a JSON timing record to `scripts/gate-timing.log` |
+
+### npm scripts
+
+```json
+{
+  "check:verify:smart": "node scripts/quality-gate.js --verify --smart --storybook",
+  "check:verify:full": "node scripts/quality-gate.js --verify --storybook"
+}
+```
+
+### Adding smart mode to a new repo
+
+**1. Copy the shared core module**
+
+Run the sync script from `oss-quality-standards`:
+
+```sh
+node scripts/sync-smart-gate.js /path/to/new-repo
+```
+
+This copies `scripts/smart-gate-core.js` to the consumer's `scripts/` folder.
+
+**2. Wire the import at the top of `quality-gate.js`**
+
+```js
+import {
+  FULL_FILE_THRESHOLD,
+  resolveChangedFiles,
+  evaluateTriggers,
+  resolveTargetedTests,
+} from './smart-gate-core.js';
+```
+
+**3. Add smart-mode flags and orchestration** (see `giselle-mui/scripts/quality-gate.js`
+for the full reference implementation).
+
+**4. Update the pre-push hook**
+
+```sh
+"$NODE" scripts/quality-gate.js --verify --smart --storybook
+```
+
+**5. Add to `.gitignore`**
+
+```
+# Smart gate telemetry log — local only
+scripts/gate-timing.log
+```
+
+### Sync rule — non-negotiable
+
+Any PR that changes smart-gate behavior in a consumer repo must:
+
+1. Run `node scripts/sync-smart-gate.js <consumer-repo-path>` to keep the vendored
+   `smart-gate-core.js` in sync with the canonical source.
+2. Include timing evidence in the PR description:
+   - Baseline full gate timing on the same change set
+   - Smart gate timing on the same change set
+   - Step-level executed/skipped summary from the timing output
+
+### Acceptance criteria (pilot: giselle-mui)
+
+- ≥30% median pre-push time reduction vs the full gate.
+- Zero increase in CI false negatives.
+- Rollback trigger: 2 consecutive PRs failing CI due to smart-gate misclassification.
+- Rollout to the next repo only after 5 successful pilot PRs in giselle-mui.
+
+---
+
 ## Removing or skipping a check temporarily
 
 Never remove a check from the script without branch owner approval. If a check is temporarily broken (e.g. a flaky test in CI), gate it behind an environment variable rather than deleting it:
