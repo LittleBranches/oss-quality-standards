@@ -77,7 +77,7 @@ export function resolveChangedFiles(appDir) {
     })
       .toString()
       .trim();
-    const output = execSync(`git diff --name-only ${upstream}...HEAD`, {
+    const output = execSync(`git diff --name-only "${upstream}"...HEAD`, {
       cwd: appDir,
       stdio: ['ignore', 'pipe', 'ignore'],
     })

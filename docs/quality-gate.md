@@ -124,11 +124,13 @@ Guidelines:
 
 ---
 
-## Smart gate (pre-push only)
+## Smart gate (consumer repos only)
 
 The smart gate is an opt-in mode that skips heavy steps when the changed files
-don't require them. It is **enabled by default in the pre-push hook** and always
-disabled in CI. The full gate is always used in CI regardless of flags.
+don't require them. It is a **consumer-repo feature** — not active in this
+repository. To use it, copy `scripts/smart-gate-core.js` into a target repo and
+wire the `--smart` flag into that repo's quality gate. Once enabled, it is
+typically used in the pre-push hook only; CI always runs the full gate.
 
 ### How it works
 
@@ -151,6 +153,10 @@ Once the diff is known, each heavy step is evaluated independently:
 Core static checks (banned content, structure, prettier, eslint, tsc) always run.
 
 ### Flags
+
+> **Note:** These flags are only available in consumer repos that have copied and
+> wired `smart-gate-core.js` into their own `quality-gate.js`. They do not apply
+> to this repository's canonical `scripts/quality-gate.js`.
 
 | Flag            | Effect                                                   |
 | --------------- | -------------------------------------------------------- |
