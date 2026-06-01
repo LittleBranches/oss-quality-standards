@@ -146,7 +146,7 @@ Once the diff is known, each heavy step is evaluated independently:
 | --------------- | ------------------------------------------------------------------------------------ |
 | Tests           | Any `src/` file changed (targeted by co-located `.test.ts`; full suite if >25 files) |
 | tsup build      | `src/`, `tsup.config.ts`, `tsconfig.json`, or `package.json` changed                 |
-| Storybook build | `src/`, `*.stories.tsx`, or `.storybook/` changed                                    |
+| Storybook build | `src/`, `*.stories.ts`, `*.stories.tsx`, or `.storybook/` changed                   |
 
 Core static checks (banned content, structure, prettier, eslint, tsc) always run.
 

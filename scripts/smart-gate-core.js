@@ -97,7 +97,7 @@ export function resolveChangedFiles(appDir) {
       })
         .toString()
         .trim();
-      const output = execSync(`git diff --name-only ${base}`, {
+      const output = execSync(`git diff --name-only ${base} HEAD`, {
         cwd: appDir,
         stdio: ['ignore', 'pipe', 'ignore'],
       })
@@ -143,11 +143,16 @@ export function evaluateTriggers(files, opts = {}) {
   const anyBuild = files.some((f) => buildTrigger.some((p) => p.test(f)));
   const anyStory = files.some((f) => storyTrigger.some((p) => p.test(f)));
   const onlyNonTest = files.every((f) => testSkipOnly.some((p) => p.test(f)));
+  const anySrc = files.some((f) => f.startsWith('src/'));
 
   let tests;
   if (onlyNonTest) {
     tests = 'none';
   } else if (files.length > threshold) {
+    tests = 'all';
+  } else if (!anySrc) {
+    // No src/ files changed — resolveTargetedTests would return [].
+    // Fall back to the full suite to avoid running zero tests.
     tests = 'all';
   } else {
     tests = 'targeted';

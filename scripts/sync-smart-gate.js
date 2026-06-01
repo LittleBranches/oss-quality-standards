@@ -42,6 +42,7 @@ if (!existsSync(SOURCE)) {
 
 const sourceContent = readFileSync(SOURCE, 'utf8');
 let allOk = true;
+let failedCount = 0;
 
 console.log('');
 console.log('Syncing smart-gate-core.js to consumer repos…');
@@ -54,6 +55,7 @@ for (const target of args) {
   if (!existsSync(absTarget)) {
     console.error(`  ✗  ${target} — repo not found at ${absTarget}`);
     allOk = false;
+    failedCount++;
     continue;
   }
 
@@ -80,6 +82,6 @@ if (allOk) {
   console.log('✅  Sync complete');
   process.exit(0);
 } else {
-  console.error('❌  One or more targets failed — check paths above');
+  console.error(`❌  ${failedCount} of ${args.length} target(s) failed — check paths above`);
   process.exit(1);
 }
