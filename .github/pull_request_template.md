@@ -20,7 +20,7 @@
 - [ ] No commented-out code, `console.log`, `TODO`, or `FIXME`
 - [ ] No new undisclosed dependencies
 - [ ] No secrets or credentials in committed files
-- [ ] No banned identifiers or private refs (see AGENTS.md §7)
+- [ ] No banned identifiers or private refs (see `docs/AGENTS.md` §13 and the private extension)
 - [ ] Docs updated for public-facing changes
 - [ ] PR title follows `<type>(<scope>): <description>` format
 
