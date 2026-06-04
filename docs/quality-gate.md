@@ -202,7 +202,7 @@ for the full reference implementation).
 **4. Update the pre-push hook**
 
 ```sh
-"$NODE" scripts/quality-gate.js --verify --smart --storybook
+npm run check:verify:smart
 ```
 
 **5. Add to `.gitignore`**
