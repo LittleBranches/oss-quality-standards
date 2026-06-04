@@ -138,7 +138,7 @@ The gate resolves the diff with three fallbacks in order:
 
 1. **Upstream tracking branch** — `git diff --name-only @{u}...HEAD` — most precise,
    only shows commits not yet pushed to the remote branch.
-2. **Merge-base** — `git diff --name-only $(git merge-base HEAD main)` — covers
+2. **Merge-base** — `git diff --name-only $(git merge-base HEAD main) HEAD` (tries `main`, then `master`) — covers
    squash/rebase workflows where there is no upstream tracking branch.
 3. **Fallback** — diff resolution failed; the full gate runs as a safe default.
 
