@@ -138,7 +138,7 @@ The gate resolves the diff with three fallbacks in order:
 
 1. **Upstream tracking branch** — `git diff --name-only @{u}...HEAD` — most precise,
    only shows commits not yet pushed to the remote branch.
-2. **Merge-base** — `git diff --name-only $(git merge-base HEAD main)` — covers
+2. **Merge-base** — `git diff --name-only $(git merge-base HEAD main) HEAD` (tries `main`, then `master`) — covers
    squash/rebase workflows where there is no upstream tracking branch.
 3. **Fallback** — diff resolution failed; the full gate runs as a safe default.
 
@@ -146,7 +146,7 @@ Once the diff is known, each heavy step is evaluated independently:
 
 | Step            | Triggered when                                                                       |
 | --------------- | ------------------------------------------------------------------------------------ |
-| Tests           | Any `src/` file changed (targeted by co-located `.test.ts`; full suite if >25 files) |
+| Tests           | Skipped only when all files match the skip-only list; targeted when `src/` changed (co-located `.test.ts`); full suite if >25 files or if no `src/` files changed |
 | tsup build      | `src/`, `tsup.config.ts`, `tsconfig.json`, or `package.json` changed                 |
 | Storybook build | `src/`, `*.stories.ts`, `*.stories.tsx`, or `.storybook/` changed                    |
 
@@ -202,7 +202,7 @@ for the full reference implementation).
 **4. Update the pre-push hook**
 
 ```sh
-"$NODE" scripts/quality-gate.js --verify --smart --storybook
+npm run check:verify:smart
 ```
 
 **5. Add to `.gitignore`**
