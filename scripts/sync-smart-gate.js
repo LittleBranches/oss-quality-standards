@@ -77,7 +77,8 @@ for (const target of args) {
     copyFileSync(SOURCE, targetFile);
     console.log(`  ✓  ${target} — synced`);
   } catch (err) {
-    console.error(`  ✗  ${target} — copy failed: ${err.message}`);
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`  ✗  ${target} — copy failed: ${message}`);
     allOk = false;
     failedCount++;
   }
