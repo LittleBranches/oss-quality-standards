@@ -22,7 +22,7 @@ Raw URL for agents:
 
 These rules target **React projects using MUI (Material UI)**. Rules that reference `.tsx` files, MUI theme tokens, `sx`, `forwardRef`, `styled()`, or `@testing-library/react` apply only in that context.
 
-Rules in §1–§4 (AI Collaboration Protocol, Branch Hygiene, Quality Gate, PR Review Workflow) and §11 (Definition of Done) are **framework-agnostic** and apply to any LittleBranches repository regardless of stack.
+Rules in §1–§4 (AI Collaboration Protocol, Branch Hygiene, Quality Gate, PR Review Workflow), §11 (Definition of Done), and §T (TypeScript Type Ownership) are **framework-agnostic** and apply to any LittleBranches repository regardless of stack.
 
 > **Vue and Angular equivalents are planned.** When those rule sets are added, they will follow the same barrel structure and be loadable via their own trigger phrases. Until then, apply only the framework-agnostic sections (§1–§4, §11) to non-React repositories.
 
@@ -47,6 +47,7 @@ The `docs/` folder in this repo contains expanded guides for each section below.
 | sx array-safety, `...other` passthrough, icon slots, `shouldForwardProp` | `docs/component-api-contract.md`    |
 | WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule           | `docs/accessibility.md`             |
 | Vitest patterns, style test pattern, coverage requirements, mock rules   | `docs/testing.md`                   |
+| TypeScript type ownership (companion file, promotion rule, entry points) | `docs/typescript-conventions.md`    |
 
 Raw base URL for expanded docs:
 `https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/docs/<filename>`
@@ -81,6 +82,7 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 11. [Definition of Done](#11-definition-of-done)
 12. [Sensitive File Encryption](#12-sensitive-file-encryption)
 13. [Private Extension](#13-private-extension)
+T. [TypeScript Type Ownership](#t-typescript-type-ownership)
 
 ---
 
@@ -732,6 +734,26 @@ Raw URL:
 `https://raw.githubusercontent.com/LittleBranches/oss-quality-standards-private/main/AGENTS.md`
 
 If working in any public LittleBranches repository, load **both** barrels before reviewing.
+
+---
+
+## §T — TypeScript Type Ownership
+
+Framework-agnostic — applies to all LittleBranches TypeScript projects.
+
+### T.1 — Companion types file
+Every TypeScript module that declares types owns them in a companion `<module>.types.ts` file in the same directory. For component projects, types live in `types.ts` alongside the component.
+
+### T.2 — Promotion rule
+When a type is imported by a second module, move it to the nearest shared `types.ts` one level up. Promote on actual reuse — never speculatively.
+
+### T.3 — Entry points define no types
+CLI entry-point files import types; they never declare them.
+
+### T.4 — Enums follow T.1–T.3
+Same ownership and promotion rules as interfaces and type aliases.
+
+Full guide: `docs/typescript-conventions.md`
 
 ---
 
