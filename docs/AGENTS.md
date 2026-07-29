@@ -765,6 +765,16 @@ correct. Step 2 is a question about the repository, not about the script.
 **When Step 1 is close, shell loses.** "It's all subprocess calls anyway" is the strongest case for
 shell and still does not survive a single false condition above.
 
+**The principle underneath Step 2:** a script is code, and it must fall under the same static
+analysis, lint, type and test tooling as the rest of the repository. Prefer the language your quality
+gate already covers — an unanalysed script is an unreviewed script, no matter who wrote it.
+
+This has a concrete edge in LittleBranches repos, which run **SonarQube Community Build**: it does
+not analyse Shell at all, while covering TypeScript and Python in full. Every shell script is
+therefore a blind spot in the gate. That is why §14.4 makes `shellcheck` non-negotiable rather than
+best-effort — it is the only automated review shell gets here — and a further reason to keep shell to
+the small, dumb jobs Step 1 permits.
+
 ### 14.2 — The 100-line ceiling is hard
 
 Rewrite any shell script exceeding 100 lines in a structured language immediately. Do not golf the

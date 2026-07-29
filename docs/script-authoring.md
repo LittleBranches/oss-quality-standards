@@ -57,6 +57,37 @@ The test for "already builds in" is whether the script runs with **no new depend
 `tsx` and a test runner already installed is a TypeScript repo for this purpose. A repo whose
 `package.json` exists only to publish releases is not.
 
+### Why the repository decides — a script is code
+
+The reason is not consistency for its own sake. **A script must fall under the same static analysis,
+lint, type and test tooling as the rest of the repository.** Scripts are where credentials get
+handled, destructive commands get run, and CI decisions get made — and they are the code least likely
+to be read carefully in review. Picking a language your quality gate cannot see removes the one
+reviewer that never gets tired.
+
+So the operative question is: **does the repo's quality gate cover this language?** Prefer a language
+where the answer is yes. An unanalysed script is an unreviewed script, regardless of who or what wrote
+it.
+
+This has a sharp consequence in LittleBranches repos, which run
+[SonarQube Community Build](https://docs.sonarsource.com/sonarqube-community-build/analyzing-source-code/languages/overview):
+
+| Language   | SonarQube Community Build |
+| ---------- | ------------------------- |
+| TypeScript | analysed                  |
+| Python     | analysed                  |
+| Shell      | **not supported**         |
+
+Shell analysis exists only in SonarQube Server and Cloud. On Community Build, a shell script receives
+**zero** SonarQube rules while a TypeScript script receives the full TypeScript ruleset. That is why
+§3.8 makes `shellcheck` non-negotiable rather than "run it if available" — for shell it is the only
+automated review the code will ever get.
+
+**If your gate does cover shell** — you are on SonarQube Server or Cloud, or you have `shellcheck`
+wired into CI — this specific argument weakens, and you should treat it as weakened. Step 1 does not
+weaken with it: the 100-line ceiling and the six conditions rest on maintainability and testability,
+which no linter fixes.
+
 ### The 100-line rule
 
 Google's shell style guide is unambiguous: rewrite scripts exceeding 100 lines in a structured
