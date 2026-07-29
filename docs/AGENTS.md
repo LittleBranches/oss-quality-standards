@@ -747,45 +747,72 @@ scripts backing an agent skill.
 
 ### 14.1 — Choose the language before writing a line
 
-**Step 1 — may this be shell?** Only if _every_ one of these holds: under 100 lines · linear control
-flow · no data structures beyond strings and flat lists · only orchestrates other CLIs · POSIX-only
-target, no Windows requirement · output read by a human. **If even one is false, shell is out** — and
-do not golf the line count to stay under the ceiling.
+**Step 1 — may this be shell?** Only if **all six** of these are true:
 
-**Step 2 — shell is out; the repository picks the language.** Write the script in the language the
-repo already builds in, through the entry points it already has: a Node/TypeScript repo writes
-`scripts/<name>.ts` behind an `npm run` script. **Use Python** when the repo has no runtime toolchain
-of its own, or the script must run standalone outside any project.
+- It is under 100 lines.
+- It runs top to bottom, with no branching nested deeper than one level.
+- The only data it handles is text and flat lists — no maps, objects or nested structures.
+- It calls other command-line tools and contains no logic of its own.
+- It never has to run on Windows.
+- Its output is read by a person, not by another program.
+
+If even one is false, shell is out. Do not squeeze lines together to get under 100.
+
+**Step 2 — shell is out, so the repository chooses the language.** Not the author's preference. Write
+the script in the language the repository already builds in, using the entry points it already has: a
+Node/TypeScript repository writes `scripts/<name>.ts` behind an `npm run` script. Use **Python** only
+when the repository has no toolchain of its own, or the script must run on its own outside any
+project.
 
 ### 14.2 — Never inline a script in Markdown
 
-Multi-line script code, in any language, belongs in `scripts/<name>.<ext>`, never pasted into a
-`SKILL.md`, `README.md` or any other document. The document calls it and documents its arguments,
-output and exit codes.
+Multi-line script code, in any language, belongs in `scripts/<name>.<ext>`. It is never pasted into a
+`SKILL.md`, a `README.md` or any other document. The document calls the script, and documents its
+arguments, its output and its exit codes.
 
-Never write `&&`-chained, backslash-continued blocks. Never duplicate the same logic in two code
-blocks in one document — if two sections need it, it is one script taking arguments.
+- Never write a long command chained together with `&&` and continued with trailing backslashes. When
+  one step fails there is no line number to look at, and every step after it is skipped silently.
+- Never put the same logic in two code blocks in one document. If two sections need it, it is one
+  script that takes arguments.
+- A single command may stay in the document. Commands that check out, merge, push, publish or delete
+  **should** stay in the document, so that a person approves each one instead of running a batch
+  nobody has read.
 
-Single commands may stay inline. Steps that check out, merge, push, publish or delete **should**
-stay inline, so each is approved individually rather than run in a batch nobody inspected.
+### 14.3 — Minimums for every script
 
-### 14.3 — Non-negotiable minimums
+- A comment at the top stating what the script does, how to run it, and what each exit code means.
+- `--help` works, and prints the usage.
+- Errors and progress messages go to **stderr**. The actual result goes to **stdout**, so that the
+  output can be piped into something else.
+- The script exits `0` only on success. Every other exit code is documented.
+- Never build a command by joining strings together and then running it. No `eval`, no `shell=True`,
+  no `exec` on an interpolated string. This is the command-injection rule.
 
-Every script: a header comment giving purpose, usage and exit codes · a working `--help` ·
-diagnostics to **stderr** and results to stdout · documented, correct exit codes · no `eval`, no
-`shell=True`, no `exec` with an interpolated string.
+Each language must also pass its own linter, and that linter is the gate:
 
-| Language   | Adds                                                                                                                                                                                                                                                                                   |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Shell      | `#!/usr/bin/env bash` · `set -euo pipefail` (do **not** override `IFS`) · quote every expansion · `[[ … ]]` over `[ … ]` · `local` in functions · `main "$@"` last · **`shellcheck` clean**                                                                                            |
-| TypeScript | an `npm run` entry point · `parseArgs` from `node:util` or the repo's existing parser · a `main()` returning an exit code, assigned to `process.exitCode` · `execFile`/`spawn` with an argument list · no `any` on an exported signature · **the repo's own lint and typecheck clean** |
-| Python     | `#!/usr/bin/env python3` · `argparse` · `sys.exit(main())` · standard library only unless a dependency is justified · `subprocess.run` with an argument list · type hints · **`ruff` clean**                                                                                           |
+| Language   | Linter gate                                 | The reviewer also checks                                                      |
+| ---------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
+| Shell      | **`shellcheck`, zero warnings**             | the shebang is `#!/usr/bin/env bash`, and the script sets `set -euo pipefail` |
+| TypeScript | **the repository's own lint and typecheck** | it is reachable through an `npm run` entry point, and exports no `any`        |
+| Python     | **`ruff`**                                  | standard library only, unless a dependency is justified                       |
 
-### 14.4 — Verification is running it, not reading it
+The remaining per-language conventions are style rules that these linters largely enforce on their
+own. They live in `docs/script-authoring.md` §3–§5 rather than here.
 
-Exercise the failure paths — missing input, empty input, an item that fails mid-loop — not just the
-happy path. Verify exit codes explicitly; a script that prints an error and exits `0` is broken.
+### 14.4 — Verification means running it, not reading it
+
+Test what happens when things go wrong — missing input, empty input, an item that fails part-way
+through a loop — and not only the case where everything works.
+
+Check the exit code deliberately. A script that prints an error message and still exits `0` reports
+success to CI, which then goes green on a broken run. The printed output alone will not reveal this.
+
 State in the PR what you ran and what it produced.
+
+> **Provenance.** Step 1 and the shell conventions come from the
+> [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html). **Step 2 and the
+> TypeScript conventions are LittleBranches house rules with no external source** — they are our
+> judgement, not received practice. See `docs/roadmap.md` Phase E on citing rules.
 
 Rationale, per-language detail and worked examples: `docs/script-authoring.md`
 

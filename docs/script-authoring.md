@@ -395,6 +395,22 @@ waiting to happen.
 
 ## Sources
 
+### House rules — no external source
+
+State these as our judgement, not as received practice. If someone challenges them in review, there
+is no authority to appeal to beyond this document.
+
+- **§1 Step 2 — "the repository chooses the language."** Written for LittleBranches in July 2026.
+  No published style guide states it.
+- **§4 — the entire TypeScript minimum standard.** Derived from ordinary Node practice, but no
+  external guide is cited for any individual rule.
+- **§5 — the Python minimums** are conventional, but uncited here.
+
+`docs/roadmap.md` Phase E ("External Citations Pass") covers closing this gap. Until it is done, the
+shell rules below are the only part of this document with provenance.
+
+### Cited
+
 - [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html) — the 100-line
   ceiling, quoting, `[[ ]]`, `local`, `main "$@"`, STDERR, ShellCheck, prohibitions.
 - [Use Bash Strict Mode (Unless You Love Debugging)](http://redsymbol.net/articles/unofficial-bash-strict-mode/)
