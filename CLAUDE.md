@@ -23,18 +23,18 @@ Read that file in full before responding to any task. It is the single source of
 
 Where AGENTS.md references `gh` CLI commands, use GitHub MCP tools instead:
 
-| `gh` command                                   | MCP equivalent                                                               |
-| ---------------------------------------------- | ---------------------------------------------------------------------------- |
-| `gh pr view <N>`                               | `mcp__github__pull_request_read` (method: `get`)                             |
-| `gh pr view <N> --json headRefOid`             | `mcp__github__pull_request_read` (method: `get`) — use `head.sha`            |
-| `gh pr view <N> --json reviewRequests`         | `mcp__github__pull_request_read` (method: `get`) — use `requested_reviewers` |
-| `gh pr diff <N>`                               | `mcp__github__pull_request_read` (method: `get_diff`)                        |
-| `gh pr view <N> --json files`                  | `mcp__github__pull_request_read` (method: `get_files`)                       |
-| `gh api --paginate /pulls/<N>/comments`        | `mcp__github__pull_request_read` (method: `get_review_comments`)             |
-| `gh api POST ... /pulls/comments/<id>/replies` | `mcp__github__add_reply_to_pull_request_comment`                             |
-| `gh pr edit <N>`                               | `mcp__github__update_pull_request`                                           |
-| `gh issue create`                              | `mcp__github__issue_write`                                                   |
-| `gh pr create`                                 | `mcp__github__create_pull_request`                                           |
+| `gh` command                                       | MCP equivalent                                                               |
+| -------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `gh pr view <N>`                                   | `mcp__github__pull_request_read` (method: `get`)                             |
+| `gh pr view <N> --json headRefOid`                 | `mcp__github__pull_request_read` (method: `get`) — use `head.sha`            |
+| `gh pr view <N> --json reviewRequests`             | `mcp__github__pull_request_read` (method: `get`) — use `requested_reviewers` |
+| `gh pr diff <N>`                                   | `mcp__github__pull_request_read` (method: `get_diff`)                        |
+| `gh pr view <N> --json files`                      | `mcp__github__pull_request_read` (method: `get_files`)                       |
+| `gh api --paginate /pulls/<N>/comments`            | `mcp__github__pull_request_read` (method: `get_review_comments`)             |
+| `gh api POST ... /pulls/<N>/comments/<id>/replies` | `mcp__github__add_reply_to_pull_request_comment`                             |
+| `gh pr edit <N>`                                   | `mcp__github__update_pull_request`                                           |
+| `gh issue create`                                  | `mcp__github__issue_write`                                                   |
+| `gh pr create`                                     | `mcp__github__create_pull_request`                                           |
 
 If the `gh` CLI is available in the session, prefer it. Use MCP tools only when `gh` is absent.
 
