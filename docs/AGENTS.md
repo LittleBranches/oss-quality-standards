@@ -747,78 +747,47 @@ scripts backing an agent skill.
 
 ### 14.1 — Choose the language before writing a line
 
-Two questions, in order.
-
 **Step 1 — may this be shell?** Only if _every_ one of these holds: under 100 lines · linear control
 flow · no data structures beyond strings and flat lists · only orchestrates other CLIs · POSIX-only
-target, no Windows requirement · output read by a human. **If even one is false, shell is out.**
+target, no Windows requirement · output read by a human. **If even one is false, shell is out** — and
+do not golf the line count to stay under the ceiling.
 
-**Step 2 — shell is out; the repository picks the language.** Not preference. Write the script in the
-language the repo already builds in, through the entry points it already has — a Node/TypeScript repo
-writes `scripts/<name>.ts` behind an `npm run` script. Introducing a second runtime means a second
-toolchain, a second lint config and a second CI install step, and buys nothing. **Use Python** when
-the repo has no runtime toolchain of its own, or the script must run standalone outside any project.
+**Step 2 — shell is out; the repository picks the language.** Write the script in the language the
+repo already builds in, through the entry points it already has: a Node/TypeScript repo writes
+`scripts/<name>.ts` behind an `npm run` script. **Use Python** when the repo has no runtime toolchain
+of its own, or the script must run standalone outside any project.
 
-The same task is therefore a TypeScript file in one repo and a Python file in another, and both are
-correct. Step 2 is a question about the repository, not about the script.
+### 14.2 — Never inline a script in Markdown
 
-**When Step 1 is close, shell loses.** "It's all subprocess calls anyway" is the strongest case for
-shell and still does not survive a single false condition above.
+Multi-line script code, in any language, belongs in `scripts/<name>.<ext>`, never pasted into a
+`SKILL.md`, `README.md` or any other document. The document calls it and documents its arguments,
+output and exit codes.
 
-**The principle underneath Step 2:** a script is code, and it must fall under the same static
-analysis, lint, type and test tooling as the rest of the repository. Prefer the language your quality
-gate already covers — an unanalysed script is an unreviewed script, no matter who wrote it.
-
-This has a concrete edge in LittleBranches repos, which run **SonarQube Community Build**: it does
-not analyse Shell at all, while covering TypeScript and Python in full. Every shell script is
-therefore a blind spot in the gate. That is why §14.4 makes `shellcheck` non-negotiable rather than
-best-effort — it is the only automated review shell gets here — and a further reason to keep shell to
-the small, dumb jobs Step 1 permits.
-
-### 14.2 — The 100-line ceiling is hard
-
-Rewrite any shell script exceeding 100 lines in a structured language immediately. Do not golf the
-line count to stay under it — if the logic needs 200 lines in any language, it is not a shell script.
-
-### 14.3 — Never inline a script in Markdown
-
-Multi-line script code, in any language, belongs in `scripts/<name>.<ext>`, never pasted into a `SKILL.md`,
-`README.md` or any other document. The document calls it and documents its arguments, output and
-exit codes.
-
-**Never write `&&`-chained, backslash-continued blocks** — no line numbers, no way to run one step
-in isolation, and a failure anywhere silently kills the chain. **Never duplicate the same logic in
-two code blocks in one document**; if two sections need it, it is one script taking arguments.
+Never write `&&`-chained, backslash-continued blocks. Never duplicate the same logic in two code
+blocks in one document — if two sections need it, it is one script taking arguments.
 
 Single commands may stay inline. Steps that check out, merge, push, publish or delete **should**
 stay inline, so each is approved individually rather than run in a batch nobody inspected.
 
-### 14.4 — Non-negotiable minimums
+### 14.3 — Non-negotiable minimums
 
 Every script: a header comment giving purpose, usage and exit codes · a working `--help` ·
-diagnostics to **stderr** and results to stdout · documented, correct exit codes · no `eval` and no
-`shell=True`.
+diagnostics to **stderr** and results to stdout · documented, correct exit codes · no `eval`, no
+`shell=True`, no `exec` with an interpolated string.
 
-Shell adds: `#!/usr/bin/env bash` · `set -euo pipefail` (but **do not** override `IFS` — that advice
-was withdrawn) · quote every expansion · `[[ … ]]` over `[ … ]` · `local` in functions · `main "$@"`
-as the last line · **`shellcheck` clean**.
+| Language   | Adds                                                                                                                                                                                                                                                                                   |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Shell      | `#!/usr/bin/env bash` · `set -euo pipefail` (do **not** override `IFS`) · quote every expansion · `[[ … ]]` over `[ … ]` · `local` in functions · `main "$@"` last · **`shellcheck` clean**                                                                                            |
+| TypeScript | an `npm run` entry point · `parseArgs` from `node:util` or the repo's existing parser · a `main()` returning an exit code, assigned to `process.exitCode` · `execFile`/`spawn` with an argument list · no `any` on an exported signature · **the repo's own lint and typecheck clean** |
+| Python     | `#!/usr/bin/env python3` · `argparse` · `sys.exit(main())` · standard library only unless a dependency is justified · `subprocess.run` with an argument list · type hints · **`ruff` clean**                                                                                           |
 
-TypeScript adds: an `npm run` entry point · argument parsing via `parseArgs` from `node:util` or the
-parser the repo already uses · a `main()` returning an exit code, assigned to `process.exitCode` ·
-`execFile`/`spawn` with an argument list, never `exec` with an interpolated string · no `any` on an
-exported signature · **the repo's own lint and typecheck clean**.
-
-Python adds: `#!/usr/bin/env python3` · `argparse` · `sys.exit(main())` · standard library only
-unless a dependency is justified · `subprocess.run` with an argument list · type hints ·
-**`ruff` clean**.
-
-### 14.5 — Verification is running it, not reading it
+### 14.4 — Verification is running it, not reading it
 
 Exercise the failure paths — missing input, empty input, an item that fails mid-loop — not just the
-happy path. Verify exit codes explicitly; a script that prints an error and exits `0` is broken and
-the output alone will not show it. State in the PR what you ran and what it produced.
+happy path. Verify exit codes explicitly; a script that prints an error and exits `0` is broken.
+State in the PR what you ran and what it produced.
 
-Full guide: `docs/script-authoring.md`
+Rationale, per-language detail and worked examples: `docs/script-authoring.md`
 
 ---
 
