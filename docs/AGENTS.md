@@ -48,6 +48,7 @@ The `docs/` folder in this repo contains expanded guides for each section below.
 | WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule           | `docs/accessibility.md`             |
 | Vitest patterns, style test pattern, coverage requirements, mock rules   | `docs/testing.md`                   |
 | TypeScript type ownership (companion file, promotion rule, entry points) | `docs/typescript-conventions.md`    |
+| Script language choice, per-language minimums, verification              | `docs/script-authoring.md`          |
 
 Raw base URL for expanded docs:
 `https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/docs/<filename>`
@@ -746,25 +747,32 @@ scripts backing an agent skill.
 
 ### 14.1 — Choose the language before writing a line
 
-Use **shell** only when _every_ one of these holds: under 100 lines · linear control flow · no data
-structures beyond strings and flat lists · only orchestrates other CLIs · POSIX-only target, no
-Windows requirement · output read by a human.
+Two questions, in order.
 
-Use **Python** when _any_ one of these holds: over 100 lines · needs a dict, nested structure or
-real parsing · must emit JSON for a program or agent to consume · must run on Windows · needs
-tests · needs real error handling.
+**Step 1 — may this be shell?** Only if _every_ one of these holds: under 100 lines · linear control
+flow · no data structures beyond strings and flat lists · only orchestrates other CLIs · POSIX-only
+target, no Windows requirement · output read by a human. **If even one is false, shell is out.**
 
-**When the call is close, choose Python.** "It's all subprocess calls anyway" is the strongest case
-for shell and still loses to any trigger above.
+**Step 2 — shell is out; the repository picks the language.** Not preference. Write the script in the
+language the repo already builds in, through the entry points it already has — a Node/TypeScript repo
+writes `scripts/<name>.ts` behind an `npm run` script. Introducing a second runtime means a second
+toolchain, a second lint config and a second CI install step, and buys nothing. **Use Python** when
+the repo has no runtime toolchain of its own, or the script must run standalone outside any project.
+
+The same task is therefore a TypeScript file in one repo and a Python file in another, and both are
+correct. Step 2 is a question about the repository, not about the script.
+
+**When Step 1 is close, shell loses.** "It's all subprocess calls anyway" is the strongest case for
+shell and still does not survive a single false condition above.
 
 ### 14.2 — The 100-line ceiling is hard
 
 Rewrite any shell script exceeding 100 lines in a structured language immediately. Do not golf the
-line count to stay under it — if the logic needs 200 lines in any language, it is a Python script.
+line count to stay under it — if the logic needs 200 lines in any language, it is not a shell script.
 
 ### 14.3 — Never inline a script in Markdown
 
-Multi-line shell or Python belongs in `scripts/<name>.<ext>`, never pasted into a `SKILL.md`,
+Multi-line script code, in any language, belongs in `scripts/<name>.<ext>`, never pasted into a `SKILL.md`,
 `README.md` or any other document. The document calls it and documents its arguments, output and
 exit codes.
 
@@ -784,6 +792,11 @@ diagnostics to **stderr** and results to stdout · documented, correct exit code
 Shell adds: `#!/usr/bin/env bash` · `set -euo pipefail` (but **do not** override `IFS` — that advice
 was withdrawn) · quote every expansion · `[[ … ]]` over `[ … ]` · `local` in functions · `main "$@"`
 as the last line · **`shellcheck` clean**.
+
+TypeScript adds: an `npm run` entry point · argument parsing via `parseArgs` from `node:util` or the
+parser the repo already uses · a `main()` returning an exit code, assigned to `process.exitCode` ·
+`execFile`/`spawn` with an argument list, never `exec` with an interpolated string · no `any` on an
+exported signature · **the repo's own lint and typecheck clean**.
 
 Python adds: `#!/usr/bin/env python3` · `argparse` · `sys.exit(main())` · standard library only
 unless a dependency is justified · `subprocess.run` with an argument list · type hints ·
