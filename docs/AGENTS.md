@@ -48,6 +48,7 @@ The `docs/` folder in this repo contains expanded guides for each section below.
 | WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule           | `docs/accessibility.md`             |
 | Vitest patterns, style test pattern, coverage requirements, mock rules   | `docs/testing.md`                   |
 | TypeScript type ownership (companion file, promotion rule, entry points) | `docs/typescript-conventions.md`    |
+| Script language choice, per-language minimums, verification              | `docs/script-authoring.md`          |
 
 Raw base URL for expanded docs:
 `https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/docs/<filename>`
@@ -82,6 +83,8 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 11. [Definition of Done](#11-definition-of-done)
 12. [Sensitive File Encryption](#12-sensitive-file-encryption)
 13. [Private Extension](#13-private-extension)
+14. [Script Authoring](#14-script-authoring)
+
 T. [TypeScript Type Ownership](#t-typescript-type-ownership)
 
 ---
@@ -737,20 +740,102 @@ If working in any public LittleBranches repository, load **both** barrels before
 
 ---
 
+## 14. Script Authoring
+
+Applies to every script shipped in a repository — build helpers, git automation, CI glue, and
+scripts backing an agent skill.
+
+### 14.1 — Choose the language before writing a line
+
+**Step 1 — may this be shell?** Only if **all six** of these are true:
+
+- It is under 100 lines.
+- It runs top to bottom, with no branching nested deeper than one level.
+- The only data it handles is text and flat lists — no maps, objects or nested structures.
+- It calls other command-line tools and contains no logic of its own.
+- It never has to run on Windows.
+- Its output is read by a person, not by another program.
+
+If even one is false, shell is out. Do not squeeze lines together to get under 100.
+
+**Step 2 — shell is out, so the repository chooses the language.** Not the author's preference. Write
+the script in the language the repository already builds in, using the entry points it already has: a
+Node/TypeScript repository writes `scripts/<name>.ts` behind an `npm run` script. Use **Python** only
+when the repository has no toolchain of its own, or the script must run on its own outside any
+project.
+
+### 14.2 — Never inline a script in Markdown
+
+Multi-line script code, in any language, belongs in `scripts/<name>.<ext>`. It is never pasted into a
+`SKILL.md`, a `README.md` or any other document. The document calls the script, and documents its
+arguments, its output and its exit codes.
+
+- Never write a long command chained together with `&&` and continued with trailing backslashes. When
+  one step fails there is no line number to look at, and every step after it is skipped silently.
+- Never put the same logic in two code blocks in one document. If two sections need it, it is one
+  script that takes arguments.
+- A single command may stay in the document. Commands that check out, merge, push, publish or delete
+  **should** stay in the document, so that a person approves each one instead of running a batch
+  nobody has read.
+
+### 14.3 — Minimums for every script
+
+- A comment at the top stating what the script does, how to run it, and what each exit code means.
+- `--help` works, and prints the usage.
+- Errors and progress messages go to **stderr**. The actual result goes to **stdout**, so that the
+  output can be piped into something else.
+- The script exits `0` only on success. Every other exit code is documented.
+- Never build a command by joining strings together and then running it. No `eval`, no `shell=True`,
+  no `exec` on an interpolated string. This is the command-injection rule.
+
+Each language must also pass its own linter, and that linter is the gate:
+
+| Language   | Linter gate                                 | The reviewer also checks                                                      |
+| ---------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
+| Shell      | **`shellcheck`, zero warnings**             | the shebang is `#!/usr/bin/env bash`, and the script sets `set -euo pipefail` |
+| TypeScript | **the repository's own lint and typecheck** | it is reachable through an `npm run` entry point, and exports no `any`        |
+| Python     | **`ruff`**                                  | standard library only, unless a dependency is justified                       |
+
+The remaining per-language conventions are style rules that these linters largely enforce on their
+own. They live in `docs/script-authoring.md` §3–§5 rather than here.
+
+### 14.4 — Verification means running it, not reading it
+
+Test what happens when things go wrong — missing input, empty input, an item that fails part-way
+through a loop — and not only the case where everything works.
+
+Check the exit code deliberately. A script that prints an error message and still exits `0` reports
+success to CI, which then goes green on a broken run. The printed output alone will not reveal this.
+
+State in the PR what you ran and what it produced.
+
+> **Provenance.** Step 1 and the shell conventions come from the
+> [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html). **Step 2 and the
+> TypeScript conventions are LittleBranches house rules with no external source** — they are our
+> judgement, not received practice. See `docs/roadmap.md` Phase E on citing rules.
+
+Rationale, per-language detail and worked examples: `docs/script-authoring.md`
+
+---
+
 ## §T — TypeScript Type Ownership
 
 Framework-agnostic — applies to all LittleBranches TypeScript projects.
 
 ### T.1 — Companion types file
+
 Every TypeScript module that declares types owns them in a companion `<module>.types.ts` file in the same directory. For component projects, types live in `types.ts` alongside the component.
 
 ### T.2 — Promotion rule
+
 When a type is imported by a second module, move it to the nearest shared `types.ts` one level up. Promote on actual reuse — never speculatively.
 
 ### T.3 — Entry points define no types
+
 CLI entry-point files import types; they never declare them.
 
 ### T.4 — Enums follow T.1–T.3
+
 Same ownership and promotion rules as interfaces and type aliases.
 
 Full guide: `docs/typescript-conventions.md`

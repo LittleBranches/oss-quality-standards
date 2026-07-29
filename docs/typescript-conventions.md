@@ -56,7 +56,10 @@ CLI entry-point files and top-level orchestrators import types — they never de
 import type { BackfillTask, BackfillResult } from './lib/backfill-issue-ref.types';
 
 // ❌ wrong — types defined inline in entry point
-interface BackfillTask { gid: string; notes: string; }
+interface BackfillTask {
+  gid: string;
+  notes: string;
+}
 ```
 
 ---
@@ -69,9 +72,9 @@ Enums are not special — the same ownership and promotion rules apply. A module
 
 ## Anti-patterns this standard prevents
 
-| Anti-pattern | Problem |
-|---|---|
-| Dumping all types into a flat `lib/types.ts` upfront | Breaks ownership; makes it impossible to tell which module a type belongs to |
-| Defining interfaces inline in entry-point scripts | Entry points become implicit type owners; types get duplicated when other modules need them |
-| Duplicating the same interface in sibling modules | Divergence over time; no single source of truth |
-| Pre-promoting types speculatively | `lib/types.ts` fills with unused types; harder to find the right file |
+| Anti-pattern                                         | Problem                                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Dumping all types into a flat `lib/types.ts` upfront | Breaks ownership; makes it impossible to tell which module a type belongs to                |
+| Defining interfaces inline in entry-point scripts    | Entry points become implicit type owners; types get duplicated when other modules need them |
+| Duplicating the same interface in sibling modules    | Divergence over time; no single source of truth                                             |
+| Pre-promoting types speculatively                    | `lib/types.ts` fills with unused types; harder to find the right file                       |
