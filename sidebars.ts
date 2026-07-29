@@ -69,6 +69,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'doc',
+      id: 'script-authoring',
+      label: 'Script Authoring',
+    },
+    {
+      type: 'doc',
       id: 'roadmap',
       label: 'Roadmap',
     },

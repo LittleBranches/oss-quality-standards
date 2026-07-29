@@ -82,6 +82,8 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 11. [Definition of Done](#11-definition-of-done)
 12. [Sensitive File Encryption](#12-sensitive-file-encryption)
 13. [Private Extension](#13-private-extension)
+14. [Script Authoring](#14-script-authoring)
+
 T. [TypeScript Type Ownership](#t-typescript-type-ownership)
 
 ---
@@ -737,20 +739,84 @@ If working in any public LittleBranches repository, load **both** barrels before
 
 ---
 
+## 14. Script Authoring
+
+Applies to every script shipped in a repository — build helpers, git automation, CI glue, and
+scripts backing an agent skill.
+
+### 14.1 — Choose the language before writing a line
+
+Use **shell** only when _every_ one of these holds: under 100 lines · linear control flow · no data
+structures beyond strings and flat lists · only orchestrates other CLIs · POSIX-only target, no
+Windows requirement · output read by a human.
+
+Use **Python** when _any_ one of these holds: over 100 lines · needs a dict, nested structure or
+real parsing · must emit JSON for a program or agent to consume · must run on Windows · needs
+tests · needs real error handling.
+
+**When the call is close, choose Python.** "It's all subprocess calls anyway" is the strongest case
+for shell and still loses to any trigger above.
+
+### 14.2 — The 100-line ceiling is hard
+
+Rewrite any shell script exceeding 100 lines in a structured language immediately. Do not golf the
+line count to stay under it — if the logic needs 200 lines in any language, it is a Python script.
+
+### 14.3 — Never inline a script in Markdown
+
+Multi-line shell or Python belongs in `scripts/<name>.<ext>`, never pasted into a `SKILL.md`,
+`README.md` or any other document. The document calls it and documents its arguments, output and
+exit codes.
+
+**Never write `&&`-chained, backslash-continued blocks** — no line numbers, no way to run one step
+in isolation, and a failure anywhere silently kills the chain. **Never duplicate the same logic in
+two code blocks in one document**; if two sections need it, it is one script taking arguments.
+
+Single commands may stay inline. Steps that check out, merge, push, publish or delete **should**
+stay inline, so each is approved individually rather than run in a batch nobody inspected.
+
+### 14.4 — Non-negotiable minimums
+
+Every script: a header comment giving purpose, usage and exit codes · a working `--help` ·
+diagnostics to **stderr** and results to stdout · documented, correct exit codes · no `eval` and no
+`shell=True`.
+
+Shell adds: `#!/usr/bin/env bash` · `set -euo pipefail` (but **do not** override `IFS` — that advice
+was withdrawn) · quote every expansion · `[[ … ]]` over `[ … ]` · `local` in functions · `main "$@"`
+as the last line · **`shellcheck` clean**.
+
+Python adds: `#!/usr/bin/env python3` · `argparse` · `sys.exit(main())` · standard library only
+unless a dependency is justified · `subprocess.run` with an argument list · type hints ·
+**`ruff` clean**.
+
+### 14.5 — Verification is running it, not reading it
+
+Exercise the failure paths — missing input, empty input, an item that fails mid-loop — not just the
+happy path. Verify exit codes explicitly; a script that prints an error and exits `0` is broken and
+the output alone will not show it. State in the PR what you ran and what it produced.
+
+Full guide: `docs/script-authoring.md`
+
+---
+
 ## §T — TypeScript Type Ownership
 
 Framework-agnostic — applies to all LittleBranches TypeScript projects.
 
 ### T.1 — Companion types file
+
 Every TypeScript module that declares types owns them in a companion `<module>.types.ts` file in the same directory. For component projects, types live in `types.ts` alongside the component.
 
 ### T.2 — Promotion rule
+
 When a type is imported by a second module, move it to the nearest shared `types.ts` one level up. Promote on actual reuse — never speculatively.
 
 ### T.3 — Entry points define no types
+
 CLI entry-point files import types; they never declare them.
 
 ### T.4 — Enums follow T.1–T.3
+
 Same ownership and promotion rules as interfaces and type aliases.
 
 Full guide: `docs/typescript-conventions.md`
