@@ -190,7 +190,7 @@ Prettier and ESLint handle this automatically. Flag a style issue only if it sur
 
 ## Writing review comments
 
-Use the standard verdict prefixes from [AGENTS.md §4.2.2](./AGENTS.md#22--respond-to-every-thread--no-exceptions):
+Use the standard verdict prefixes from [AGENTS.md §4 Phase 2, rule 2.2](./AGENTS.md#phase-2--copilot-review-response-one-thread-at-a-time):
 
 | Verdict               | Prefix                         | When                                |
 | --------------------- | ------------------------------ | ----------------------------------- |

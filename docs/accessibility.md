@@ -19,7 +19,7 @@ Every component must:
 - Work with a screen reader (tested with NVDA or VoiceOver)
 - Not cause seizures (no content flashing more than 3 times per second)
 
-These are not optional. An accessibility gap found in a PR review is treated as a blocking issue — same severity as a security finding. See [AGENTS.md §4 Phase 2](./AGENTS.md#23--security-and-wcag-comments-are-always-valid).
+These are not optional. An accessibility gap found in a PR review is treated as a blocking issue — same severity as a security finding. See [AGENTS.md §4 Phase 2](./AGENTS.md#phase-2--copilot-review-response-one-thread-at-a-time).
 
 ---
 
@@ -176,4 +176,4 @@ Before marking a component as complete:
 
 ## Review behaviour
 
-Any PR review comment that cites a specific WCAG 2.2 criterion (e.g. "this fails 1.4.3 Contrast") or an ARIA spec reference is **always treated as valid**. There is no counter-argument that makes it not-valid. The fix happens in the batch commit. See [AGENTS.md §4.2.3](./AGENTS.md#23--security-and-wcag-comments-are-always-valid).
+Any PR review comment that cites a specific WCAG 2.2 criterion (e.g. "this fails 1.4.3 Contrast") or an ARIA spec reference is **always treated as valid**. There is no counter-argument that makes it not-valid. The fix happens in the batch commit. See [AGENTS.md §4 Phase 2, rule 2.3](./AGENTS.md#phase-2--copilot-review-response-one-thread-at-a-time).

@@ -82,7 +82,7 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 11. [Definition of Done](#11-definition-of-done)
 12. [Sensitive File Encryption](#12-sensitive-file-encryption)
 13. [Private Extension](#13-private-extension)
-T. [TypeScript Type Ownership](#t-typescript-type-ownership)
+T. [TypeScript Type Ownership](#t--typescript-type-ownership)
 
 ---
 
