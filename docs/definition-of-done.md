@@ -6,7 +6,7 @@ sidebar_position: 5
 
 # Definition of Done — Expanded Guide
 
-> The checklist is in [AGENTS.md §6](./AGENTS.md#6-definition-of-done). This page explains how to apply each item and what "not done" looks like in practice.
+> The checklist is in [AGENTS.md §11](./AGENTS.md#11-definition-of-done). This page explains how to apply each item and what "not done" looks like in practice.
 
 ---
 
@@ -54,7 +54,7 @@ If you find one that is intentional (e.g. a debug log that needs to stay tempora
 
 ### Valid fixes in one batch commit
 
-Not two, not three — one. See [PR Review Workflow](./pr-review-workflow.md#phase-3--why-one-batch-commit) for the rationale.
+Not two, not three — one. See [PR Review Workflow](./pr-review-workflow.md#phase-3--fixing-valid-comments-one-batch) for the rationale.
 
 ### Follow-up replies with commit SHAs
 

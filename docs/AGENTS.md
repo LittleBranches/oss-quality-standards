@@ -85,7 +85,7 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 13. [Private Extension](#13-private-extension)
 14. [Script Authoring](#14-script-authoring)
 
-T. [TypeScript Type Ownership](#t-typescript-type-ownership)
+T. [TypeScript Type Ownership](#t--typescript-type-ownership)
 
 ---
 

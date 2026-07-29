@@ -195,7 +195,7 @@ Each package in the LittleBranches ecosystem currently copies its ESLint and Typ
 
 The LittleBranches ecosystem is currently a **polyrepo**: `giselle-mui`, `giselle-sections-sdk`, `giselle-ui`, `giselle-docs`, and `first-branch` are separate repositories. This is a deliberate choice, but the reasoning is not written down anywhere. Any developer joining the project — or any future version of the author — will ask: _"why not a monorepo?"_
 
-Tools like [Turborepo](https://turbo.build/repo) and [Nx](https://nx.dev) are widely adopted for exactly this kind of multi-package setup. The choice to stay polyrepo is not ignorance of those tools; it is a considered trade-off that needs to be documented so it can be revisited with the same intentionality when the conditions change.
+Tools like [Turborepo](https://turborepo.dev/docs) and [Nx](https://nx.dev) are widely adopted for exactly this kind of multi-package setup. The choice to stay polyrepo is not ignorance of those tools; it is a considered trade-off that needs to be documented so it can be revisited with the same intentionality when the conditions change.
 
 **This phase documents the current decision and sets the trigger conditions for revisiting it.**
 
