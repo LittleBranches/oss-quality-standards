@@ -82,6 +82,7 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 11. [Definition of Done](#11-definition-of-done)
 12. [Sensitive File Encryption](#12-sensitive-file-encryption)
 13. [Private Extension](#13-private-extension)
+
 T. [TypeScript Type Ownership](#t--typescript-type-ownership)
 
 ---
@@ -742,15 +743,19 @@ If working in any public LittleBranches repository, load **both** barrels before
 Framework-agnostic — applies to all LittleBranches TypeScript projects.
 
 ### T.1 — Companion types file
+
 Every TypeScript module that declares types owns them in a companion `<module>.types.ts` file in the same directory. For component projects, types live in `types.ts` alongside the component.
 
 ### T.2 — Promotion rule
+
 When a type is imported by a second module, move it to the nearest shared `types.ts` one level up. Promote on actual reuse — never speculatively.
 
 ### T.3 — Entry points define no types
+
 CLI entry-point files import types; they never declare them.
 
 ### T.4 — Enums follow T.1–T.3
+
 Same ownership and promotion rules as interfaces and type aliases.
 
 Full guide: `docs/typescript-conventions.md`
