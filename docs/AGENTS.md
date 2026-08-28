@@ -615,6 +615,37 @@ the source of truth. This rule was established after an incident in PR #53 where
 agreed in conversation was never written into the config file, causing silent drift when a
 different model was used in the next session.
 
+### 8.4 — Demo and fixture content extraction
+
+Component and story demo/fixture content — text copy, structured sample data — must be
+imported from a dedicated data module, not written as a large literal block directly inside a
+component or `.stories.tsx` file.
+
+**Fine inline:** a single label, a short placeholder string, a one-line default
+(`label: 'Revenue'`, `title: 'Metric Card'`).
+
+**Must move to a data module:** multiple paragraphs of body copy, a multi-item array of rich
+content (cards, list items, testimonials), or any other block of demo content that reads as
+real sample data rather than a trivial default.
+
+Follow the house convention already established for content-heavy consuming apps: a small,
+colocated data layer of factory functions and types — no JSX-as-logic, no runtime validation
+needed — that the presentation component or story imports from:
+
+```
+metric-card/
+  metric-card.tsx
+  metric-card.stories.tsx
+  __fixtures__/
+    metric-card.fixtures.ts   ← createMetricCardDemoData(), types
+```
+
+A hardcoded content block is invisible to a reviewer scanning component logic, forces a
+content edit to touch component/story source, and breaks the separation this barrel already
+enforces everywhere else (§5.4 types, §6.1 props, §8.1 tiered docs). This rule was added after
+an internal review found a large block of literal marketing copy shipped inside a story file,
+undetected until the PR needed reopening.
+
 ---
 
 ## 9. Accessibility
