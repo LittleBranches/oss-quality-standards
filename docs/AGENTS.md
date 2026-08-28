@@ -593,6 +593,8 @@ Stories, tests, JSDoc `@example` blocks, and all docs must NEVER contain real na
 
 Violations found in PR review are blocking — same severity as a security finding.
 
+**Exception — repo owner's own already-public professional content.** A story or fixture may use the repo owner's own real name, photos, and real former-employer/client names _only_ when that exact content is already published by the repo owner on their own public site (e.g. a portfolio). This is re-presenting information the repo owner has already chosen to disclose publicly, not introducing a new leak. It does not extend to any other real person's name, a third party's private data, or content that has not already been made public elsewhere by the repo owner. Cite the public source (e.g. the live page the content was transcribed from) in the PR description when invoking this exception.
+
 ### 8.3 — Storybook conventions
 
 Every component must have at least a `Default` story (minimal required props) and one story per significant variant. Story names use PascalCase and do not repeat the component name (`WithTrend` not `MetricCardWithTrend`).
