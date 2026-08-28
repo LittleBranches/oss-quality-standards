@@ -207,7 +207,7 @@ Set `displayName` on every component so React DevTools and error stack traces sh
 MetricCard.displayName = 'MetricCard';
 ```
 
-This is especially important for components returned from `forwardRef` or `memo`, where the inferred name may be lost.
+This is especially important for components returned from `forwardRef` or `memo`, where the inferred name may be lost. This requirement applies to every component regardless of export status or file-nesting depth — internal/unexported sub-components used only within a parent feature are not exempt.
 
 ---
 
@@ -225,7 +225,7 @@ export const MetricCard = React.forwardRef<HTMLDivElement, MetricCardProps>(
 MetricCard.displayName = 'MetricCard';
 ```
 
-Do not use `forwardRef` for components that have no DOM root to forward to (e.g. pure context providers).
+Do not use `forwardRef` for components that have no DOM root to forward to (e.g. pure context providers). This requirement applies to every component that wraps a DOM element or MUI component regardless of export status or file-nesting depth — internal/unexported sub-components used only within a parent feature are not exempt.
 
 ---
 
