@@ -472,11 +472,11 @@ Add `shouldForwardProp` for any custom prop that must not reach the DOM.
 
 ### 6.8 — `displayName`
 
-Set `displayName` on every component, especially those returned from `forwardRef` or `memo`.
+Set `displayName` on every component, especially those returned from `forwardRef` or `memo`. This applies to every component regardless of export status or file-nesting depth — internal/unexported sub-components used only within a parent feature are not exempt.
 
 ### 6.9 — `ref` forwarding
 
-Components that wrap a DOM element or MUI component must use `React.forwardRef`.
+Components that wrap a DOM element or MUI component must use `React.forwardRef`. This applies to every such component regardless of export status or file-nesting depth — internal/unexported sub-components used only within a parent feature are not exempt.
 
 ### 6.10 — Icon slots
 
