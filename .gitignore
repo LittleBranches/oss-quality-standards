@@ -4,6 +4,10 @@
 # Production
 /build
 
+# Generated distribution build of scripts/smart-gate-core.ts — rebuilt by
+# sync-smart-gate.js before every sync, never committed.
+/scripts/dist
+
 # Generated files
 .docusaurus
 .cache-loader

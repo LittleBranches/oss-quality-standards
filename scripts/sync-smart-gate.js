@@ -2,8 +2,16 @@
 /**
  * sync-smart-gate.js
  *
- * Propagates smart-gate-core.js from the canonical source in oss-quality-standards
- * to each registered consumer repo.
+ * Propagates smart-gate-core to each registered consumer repo.
+ *
+ * The canonical source is scripts/smart-gate-core.ts (real TypeScript, typechecked
+ * by this repo's own `npm run typecheck` — no special setup). Consumers receive a
+ * compiled, plain-JS build instead of the raw .ts source: this script always
+ * recompiles first (`tsc -p scripts/tsconfig.build.json`), then distributes
+ * scripts/dist/smart-gate-core.js as <consumer>/scripts/smart-gate-core.js —
+ * same filename, same extension, same runtime artifact consumers have always
+ * received. No consumer needs a newer Node version, a scripts/tsconfig.json, or
+ * any change to its own quality-gate.js import to pick this up.
  *
  * Usage:
  *   node scripts/sync-smart-gate.js <path-to-consumer-repo> [<path> ...]
@@ -11,20 +19,22 @@
  * Example (run from oss-quality-standards root):
  *   node scripts/sync-smart-gate.js ../giselle-mui ../giselle-sections-sdk
  *
- * The script copies scripts/smart-gate-core.js to <consumer>/scripts/smart-gate-core.js.
- * If the target file is already identical to the source, it is skipped with "up to date".
+ * If the target file is already identical to the freshly-built source, it is
+ * skipped with "up to date".
  *
  * Rule: run this before any PR that changes smart-gate behavior in a consumer repo.
  */
 
 import { copyFileSync, existsSync, mkdirSync, readFileSync } from 'fs';
+import { execFileSync } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const repoRoot = path.resolve(__dirname, '..');
 
-const SOURCE = path.resolve(__dirname, 'smart-gate-core.js');
+const SOURCE = path.resolve(__dirname, 'dist', 'smart-gate-core.js');
 const args = process.argv.slice(2);
 
 if (args.length === 0) {
@@ -34,6 +44,14 @@ if (args.length === 0) {
   console.error('  node scripts/sync-smart-gate.js ../giselle-mui ../giselle-sections-sdk');
   process.exit(1);
 }
+
+// Always rebuild from the TypeScript source before distributing — never trust
+// a possibly-stale scripts/dist/ left over from an earlier run.
+console.log('Building smart-gate-core.ts…');
+execFileSync('npx', ['tsc', '-p', 'scripts/tsconfig.build.json'], {
+  cwd: repoRoot,
+  stdio: 'inherit',
+});
 
 if (!existsSync(SOURCE)) {
   console.error(`Source not found: ${SOURCE}`);
