@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 /**
- * smart-gate-core.js
+ * smart-gate-core.ts
  *
  * Shared smart-gate core module for LittleBranches quality gates.
- * Canonical source: LittleBranches/oss-quality-standards/scripts/smart-gate-core.js
+ * Canonical source: LittleBranches/oss-quality-standards/scripts/smart-gate-core.ts
  *
- * This file is vendored into each consumer repo — do not edit the copy directly.
- * To update all consumers, run the sync script from oss-quality-standards:
+ * Authored in TypeScript here, but consumer repos receive a compiled
+ * .js build via the sync script — see sync-smart-gate.js. Do not edit
+ * the vendored copy directly. To update all consumers, run from
+ * oss-quality-standards:
  *
  *   node scripts/sync-smart-gate.js ../giselle-mui ../giselle-sections-sdk
  *
@@ -30,7 +32,7 @@ import path from 'path';
 export const FULL_FILE_THRESHOLD = 25;
 
 /** File patterns that trigger the tsup build step. */
-export const DEFAULT_BUILD_TRIGGER = [
+export const DEFAULT_BUILD_TRIGGER: RegExp[] = [
   /^src\//,
   /^tsup\.config\.ts$/,
   /^tsconfig\.json$/,
@@ -38,13 +40,13 @@ export const DEFAULT_BUILD_TRIGGER = [
 ];
 
 /** File patterns that trigger the Storybook build step. */
-export const DEFAULT_STORY_TRIGGER = [/\.stories\.(ts|tsx)$/, /^\.storybook\//, /^src\//];
+export const DEFAULT_STORY_TRIGGER: RegExp[] = [/\.stories\.(ts|tsx)$/, /^\.storybook\//, /^src\//];
 
 /**
  * File patterns where changes carry no bearing on tests.
  * If ALL changed files match only these patterns, the test step is skipped.
  */
-export const DEFAULT_TEST_SKIP_ONLY = [
+export const DEFAULT_TEST_SKIP_ONLY: RegExp[] = [
   /^\.storybook\//,
   /^\.github\//,
   /^docs\//,
@@ -57,6 +59,11 @@ export const DEFAULT_TEST_SKIP_ONLY = [
 
 // ── Diff resolution ────────────────────────────────────────────────────────
 
+export interface ChangedFilesResult {
+  files: string[] | null;
+  basis: 'upstream' | 'merge-base' | 'fallback';
+}
+
 /**
  * Resolve the list of files changed since the last pushed commit.
  *
@@ -65,10 +72,9 @@ export const DEFAULT_TEST_SKIP_ONLY = [
  *   2. Diff against merge-base with main/master — covers squash/rebase workflows.
  *   3. Fallback — returns null; caller must run the full gate.
  *
- * @param {string} appDir  Absolute path to the repo root.
- * @returns {{ files: string[] | null, basis: string }}
+ * @param appDir  Absolute path to the repo root.
  */
-export function resolveChangedFiles(appDir) {
+export function resolveChangedFiles(appDir: string): ChangedFilesResult {
   // 1. Upstream tracking branch.
   try {
     const upstream = execSync('git rev-parse --abbrev-ref --symbolic-full-name @{u}', {
@@ -115,20 +121,29 @@ export function resolveChangedFiles(appDir) {
 
 // ── Trigger evaluation ─────────────────────────────────────────────────────
 
+export interface EvaluateTriggersOptions {
+  buildTrigger?: RegExp[];
+  storyTrigger?: RegExp[];
+  testSkipOnly?: RegExp[];
+  threshold?: number;
+  includeStorybook?: boolean;
+}
+
+export interface TriggerResult {
+  tests: 'all' | 'targeted' | 'none';
+  build: boolean;
+  storybook: boolean;
+}
+
 /**
  * Evaluate which heavy gate steps should run given the changed file list.
  *
- * @param {string[] | null} files  Changed files from resolveChangedFiles, or null on failure.
- * @param {{
- *   buildTrigger?: RegExp[],
- *   storyTrigger?: RegExp[],
- *   testSkipOnly?: RegExp[],
- *   threshold?: number,
- *   includeStorybook?: boolean,
- * }} [opts]
- * @returns {{ tests: 'all' | 'targeted' | 'none', build: boolean, storybook: boolean }}
+ * @param files  Changed files from resolveChangedFiles, or null on failure.
  */
-export function evaluateTriggers(files, opts = {}) {
+export function evaluateTriggers(
+  files: string[] | null,
+  opts: EvaluateTriggersOptions = {},
+): TriggerResult {
   const {
     buildTrigger = DEFAULT_BUILD_TRIGGER,
     storyTrigger = DEFAULT_STORY_TRIGGER,
@@ -145,7 +160,7 @@ export function evaluateTriggers(files, opts = {}) {
   const onlyNonTest = files.every((f) => testSkipOnly.some((p) => p.test(f)));
   const anySrc = files.some((f) => f.startsWith('src/'));
 
-  let tests;
+  let tests: 'all' | 'targeted' | 'none';
   if (onlyNonTest) {
     tests = 'none';
   } else if (files.length > threshold) {
@@ -174,12 +189,11 @@ export function evaluateTriggers(files, opts = {}) {
  *   - foo.utils.ts  → foo.utils.test.ts  + foo.test.ts
  *   - foo.test.ts   → itself (if it exists on disk)
  *
- * @param {string[]} changedFiles  Changed files relative to appDir.
- * @param {string}   appDir        Absolute path to the repo root.
- * @returns {string[]}
+ * @param changedFiles  Changed files relative to appDir.
+ * @param appDir        Absolute path to the repo root.
  */
-export function resolveTargetedTests(changedFiles, appDir) {
-  const testFiles = new Set();
+export function resolveTargetedTests(changedFiles: string[], appDir: string): string[] {
+  const testFiles = new Set<string>();
 
   for (const f of changedFiles) {
     if (!f.startsWith('src/')) continue;
