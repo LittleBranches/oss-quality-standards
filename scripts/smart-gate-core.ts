@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 /**
- * smart-gate-core.ts
+ * smart-gate-core
  *
  * Shared smart-gate core module for LittleBranches quality gates.
- * Canonical source: LittleBranches/oss-quality-standards/scripts/smart-gate-core.ts
+ * Canonical source (real TypeScript): LittleBranches/oss-quality-standards/scripts/smart-gate-core.ts
  *
- * Authored in TypeScript here, but consumer repos receive a compiled
- * .js build via the sync script — see sync-smart-gate.js. Do not edit
- * the vendored copy directly. To update all consumers, run from
- * oss-quality-standards:
+ * If you're reading this as `smart-gate-core.js` in a consumer repo:
+ * this is a compiled build, not the source. Do not edit this copy
+ * directly; it will be silently overwritten by the next sync. Edit
+ * smart-gate-core.ts in oss-quality-standards instead, then run from
+ * there:
  *
  *   node scripts/sync-smart-gate.js ../giselle-mui ../giselle-sections-sdk
  *
