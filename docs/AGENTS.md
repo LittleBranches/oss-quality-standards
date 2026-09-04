@@ -302,11 +302,12 @@ Read every thread in full before responding to any.
 
 **2.2 — Respond to every thread — no exceptions**
 
-Reply in the same thread (never a top-level PR comment):
+Reply in the same thread (never a top-level PR comment). The path includes the **PR number** as
+well as the comment id — omitting it returns 404:
 
 ```sh
 gh api --method POST \
-  /repos/<owner>/<repo>/pulls/comments/<comment-id>/replies \
+  /repos/<owner>/<repo>/pulls/<N>/comments/<comment-id>/replies \
   -f body="<response>"
 ```
 

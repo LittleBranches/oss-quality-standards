@@ -144,7 +144,7 @@ reply in the **same thread** (never a top-level PR comment) using the GitHub rep
 
 ```sh
 gh api --method POST \
-  /repos/<owner>/<repo>/pulls/comments/<comment-id>/replies \
+  /repos/<owner>/<repo>/pulls/<N>/comments/<comment-id>/replies \
   -f body="<response>"
 ```
 
@@ -315,7 +315,7 @@ After the push, reply to every thread that was fixed with a follow-up response:
 
 ```sh
 gh api --method POST \
-  /repos/<owner>/<repo>/pulls/comments/<comment-id>/replies \
+  /repos/<owner>/<repo>/pulls/<N>/comments/<comment-id>/replies \
   -f body="<follow-up>"
 ```
 
@@ -333,16 +333,41 @@ Include the short commit SHA (7 characters). The branch owner can click it to ve
 
 ### Thread reply returns 404
 
-If `POST .../pulls/comments/<id>/replies` returns a 404, do **not** silently fall back to a top-level PR comment. Stop and flag it to the branch owner first:
+**Check the path first.** The overwhelmingly common cause is a malformed URL, not a permissions
+problem. The endpoint requires the **PR number** as well as the comment id:
 
 ```
-⚠️ Thread reply API returned 404 for comment <id> on <file>:<line>. This usually means the
-comment belongs to an org where the reply endpoint is restricted, or the comment was deleted.
-I cannot reply inline. Flagging here so you are aware — I will post a top-level PR comment
-that references each thread explicitly, unless you prefer a different approach.
+✅ /repos/<owner>/<repo>/pulls/<N>/comments/<comment-id>/replies
+❌ /repos/<owner>/<repo>/pulls/comments/<comment-id>/replies
+```
+
+The second form 404s every time, for every comment, in every repository. This document itself
+carried the broken form until it was corrected — so a 404 here is far more likely to be a typo than
+an org restriction.
+
+Two other real causes, in order of likelihood:
+
+1. **The review is still pending (unsubmitted).** A draft review's comments are not published, so
+   they are invisible to `GET /pulls/<N>/comments` and cannot be replied to. Verify with
+   `gh api /repos/<owner>/<repo>/pulls/<N>/reviews` — a `state` of `PENDING` means the reviewer has
+   not submitted yet. Ask them to submit; do not attempt a workaround.
+2. **The comment was deleted.**
+
+Note that an **outdated** thread (`line: null`) is _not_ a cause — outdated threads reply normally.
+
+Only if all of the above are ruled out, flag it to the branch owner before doing anything else:
+
+```
+⚠️ Thread reply API returned 404 for comment <id> on <file>:<line>. Path verified correct and the
+review is submitted, so this is not the usual cause. I cannot reply inline. Flagging here so you
+are aware — I will post a top-level PR comment that references each thread explicitly, unless you
+prefer a different approach.
 ```
 
 Only after flagging may you fall back to `gh pr comment`, and only if the branch owner does not object. The fallback comment must identify each thread by file and line so the branch owner can map responses back to the original findings.
+
+**Never let a failed reply pass silently.** Piping the call through `grep` or `head` can swallow the
+error body and make a 404 look like success. Check the response, or the exit code, explicitly.
 
 ### Thread has no line reference (top-level PR comment)
 
