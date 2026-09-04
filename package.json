@@ -16,8 +16,9 @@
     "build:smart-gate": "tsc -p scripts/tsconfig.build.json",
     "fm:fix": "prettier --write .",
     "fm:check": "prettier --check .",
-    "check": "npm run fm:fix && npm run typecheck && npm run build",
-    "check:verify": "npm run fm:check && npm run typecheck && npm run build",
+    "banned-content": "node scripts/check-banned-content.mjs",
+    "check": "npm run banned-content && npm run fm:fix && npm run typecheck && npm run build",
+    "check:verify": "npm run banned-content && npm run fm:check && npm run typecheck && npm run build",
     "postinstall": "node scripts/setup-hooks.js"
   },
   "dependencies": {

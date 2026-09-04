@@ -123,6 +123,7 @@ T. [TypeScript Type Ownership](#t--typescript-type-ownership)
 - Make "cleanup" changes unrelated to the task at hand.
 - Introduce new dependencies without listing and explaining them first.
 - **Run the quality gate proactively.** The gate runs automatically on every push (pre-push hook) and on every Vercel build. Running it manually during normal work is unnecessary and slows the developer down. See §3.3.
+- **Name or path-reference a private repository in any content posted to a public repository** — a commit, PR description, issue/PR body or comment, or committed doc — even generically-worded content that would let a reader infer a private repo's existence or structure. Describe anything sourced from a private context generically instead (e.g. "settled in an internal design session," "a private consuming app"). This applies beyond what any local banned-content scanner catches: that scanner only covers committed files, not content posted live to an issue/PR/comment. See §12/§13 for the enforced denylist.
 
 ---
 
