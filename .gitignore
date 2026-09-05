@@ -22,4 +22,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Local-only safety net (see file header) — never committed, CI has no access to it
 .banned-patterns.local
