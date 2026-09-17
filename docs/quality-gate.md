@@ -105,6 +105,21 @@ Document the reason in a comment so the next person knows why it's allowed.
 
 ---
 
+## Yalc dependency-resolution leniency
+
+ESLint, TypeScript, Tests, tsup build, and Storybook build all resolve modules, so any of them can fail because of an unrelated, in-progress breaking change in a package this repo links live via [yalc](https://github.com/wclr/yalc) — not because of a real regression in this repo's own changes. The gate can tell these apart:
+
+- After each of those five steps, if it failed **and** its output mentions the name of a package currently listed in this repo's `yalc.lock`, the gate prints a warning and treats the step as passed instead of failing the push.
+- This is a **path-based** signal (does the failure implicate a yalc-linked package by name?), not a match against any tool's exact error wording (`Could not resolve`, `Module not found`, `Cannot find module`, …), which differs across bundlers and versions and would be fragile to key on directly.
+- **This leniency never applies in CI** (`process.env.CI === 'true'`) — merged code still has to build and pass correctly for real consumers. It only affects the developer's own local pre-push run.
+- No auto-remediation happens (no automatic `yalc` re-sync, reinstall, or retry) — the gate only decides whether to block the push, nothing more. Re-syncing the yalc link remains a manual step.
+
+If a repo has no `yalc.lock` at all, this has no effect — `isLikelyYalcFailure` always returns `false` and every failure blocks as before.
+
+This same detection is available to smart-gate consumers via `loadYalcLinkedPackages` / `isLikelyYalcFailure` in `smart-gate-core.ts` (kept in sync by hand with the copy inlined in this file, since this file is meant to be a self-contained, standalone copy).
+
+---
+
 ## Adding a new check
 
 All checks are steps in `scripts/quality-gate.js`. To add one:

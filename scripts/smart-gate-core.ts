@@ -21,10 +21,12 @@
  *   resolveChangedFiles(dir)    — resolve diff since last pushed commit
  *   evaluateTriggers(files, opts) — determine which heavy steps should run
  *   resolveTargetedTests(files, dir) — map changed files to co-located .test.ts files
+ *   loadYalcLinkedPackages(dirs) — package names currently linked via yalc.lock
+ *   isLikelyYalcFailure(output, pkgs) — does failed-check output implicate a yalc-linked package?
  */
 
 import { execSync } from 'child_process';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 
 // ── Constants ─────────────────────────────────────────────────────────────
@@ -231,4 +233,49 @@ export function resolveTargetedTests(changedFiles: string[], appDir: string): st
   }
 
   return [...testFiles];
+}
+
+// ── Yalc dependency-resolution failure detection ──────────────────────────
+
+interface YalcLockFile {
+  packages?: Record<string, unknown>;
+}
+
+/**
+ * Read yalc.lock (if present) in each given directory and return the set of
+ * package names currently linked via yalc across all of them.
+ *
+ * @param dirs  Absolute directories to check for a yalc.lock file.
+ */
+export function loadYalcLinkedPackages(dirs: string[]): string[] {
+  const names = new Set<string>();
+  for (const dir of dirs) {
+    const lockPath = path.join(dir, 'yalc.lock');
+    if (!existsSync(lockPath)) continue;
+    try {
+      const data: YalcLockFile = JSON.parse(readFileSync(lockPath, 'utf8'));
+      for (const name of Object.keys(data.packages ?? {})) {
+        names.add(name);
+      }
+    } catch {
+      // Malformed or unreadable lockfile — never let this block a check.
+    }
+  }
+  return [...names];
+}
+
+/**
+ * Whether a failed check's captured output looks like it involves a
+ * yalc-linked package rather than a real regression in this repo's own
+ * code. Deliberately keys on the linked package's name actually appearing
+ * in the output — a path-based signal — rather than matching any bundler
+ * or tool's exact error wording ("Could not resolve", "Module not found",
+ * "Cannot find module", etc.), which varies across tools and versions.
+ *
+ * @param output              Captured stdout+stderr from the failed step.
+ * @param yalcLinkedPackages  Package names from loadYalcLinkedPackages.
+ */
+export function isLikelyYalcFailure(output: string, yalcLinkedPackages: string[]): boolean {
+  if (!output || yalcLinkedPackages.length === 0) return false;
+  return yalcLinkedPackages.some((pkg) => output.includes(pkg));
 }
