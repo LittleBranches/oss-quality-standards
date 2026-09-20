@@ -54,6 +54,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'doc',
+      id: 'component-refactor-conventions',
+      label: 'Component Refactor Conventions',
+    },
+    {
+      type: 'doc',
       id: 'documentation-strategy',
       label: 'Documentation Strategy',
     },

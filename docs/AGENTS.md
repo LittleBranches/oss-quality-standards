@@ -22,7 +22,7 @@ Raw URL for agents:
 
 These rules target **React projects using MUI (Material UI)**. Rules that reference `.tsx` files, MUI theme tokens, `sx`, `forwardRef`, `styled()`, or `@testing-library/react` apply only in that context.
 
-Rules in §1–§4 (AI Collaboration Protocol, Branch Hygiene, Quality Gate, PR Review Workflow), §11 (Definition of Done), and §T (TypeScript Type Ownership) are **framework-agnostic** and apply to any LittleBranches repository regardless of stack.
+Rules in §1–§4 (AI Collaboration Protocol, Branch Hygiene, Quality Gate, PR Review Workflow), §11 (Definition of Done), §15 (Component Refactor Conventions), and §T (TypeScript Type Ownership) are **framework-agnostic** and apply to any LittleBranches repository regardless of stack.
 
 > **Vue and Angular equivalents are planned.** When those rule sets are added, they will follow the same barrel structure and be loadable via their own trigger phrases. Until then, apply only the framework-agnostic sections (§1–§4, §11) to non-React repositories.
 
@@ -34,21 +34,22 @@ This file contains all enforceable rules. Load it and you have everything needed
 
 The `docs/` folder in this repo contains expanded guides for each section below. They are for humans browsing the site and for agents that need more context on a specific rule. Consult them when the rule alone is not enough:
 
-| You need                                                                                                                  | Fetch this doc                      |
-| ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| What to look for when reviewing a PR (priority order, full checklist)                                                     | `docs/code-review-guide.md`         |
-| Real ✅/❌/⚠️/⏸️ response examples, edge cases for review threads                                                         | `docs/pr-review-workflow.md`        |
-| Gray area decisions on what requires approval vs what AI can do freely                                                    | `docs/ai-collaboration-protocol.md` |
-| What N/A means on the DoD checklist, common "not done" patterns                                                           | `docs/definition-of-done.md`        |
-| Migration steps, barrel export examples, scaffolding a new component, standalone-vs-sub-component test, promotion trigger | `docs/component-structure.md`       |
-| Setup for a new repo, troubleshooting a failing gate check                                                                | `docs/quality-gate.md`              |
-| Suffix vocabulary, 4-criterion naming test, category patterns, element-first handler naming, `Inputs` prop-bag naming     | `docs/naming-conventions.md`        |
-| Three-tier doc architecture, zero-personal-data rule, story conventions                                                   | `docs/documentation-strategy.md`    |
-| sx array-safety, `...other` passthrough, icon slots, `shouldForwardProp`                                                  | `docs/component-api-contract.md`    |
-| WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule                                                            | `docs/accessibility.md`             |
-| Vitest patterns, style test pattern, coverage requirements, mock rules                                                    | `docs/testing.md`                   |
-| TypeScript type ownership (companion file, promotion rule, entry points)                                                  | `docs/typescript-conventions.md`    |
-| Script language choice, per-language minimums, verification                                                               | `docs/script-authoring.md`          |
+| You need                                                                                                                  | Fetch this doc                           |
+| ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| What to look for when reviewing a PR (priority order, full checklist)                                                     | `docs/code-review-guide.md`              |
+| Real ✅/❌/⚠️/⏸️ response examples, edge cases for review threads                                                         | `docs/pr-review-workflow.md`             |
+| Gray area decisions on what requires approval vs what AI can do freely                                                    | `docs/ai-collaboration-protocol.md`      |
+| What N/A means on the DoD checklist, common "not done" patterns                                                           | `docs/definition-of-done.md`             |
+| Migration steps, barrel export examples, scaffolding a new component, standalone-vs-sub-component test, promotion trigger | `docs/component-structure.md`            |
+| Setup for a new repo, troubleshooting a failing gate check                                                                | `docs/quality-gate.md`                   |
+| Suffix vocabulary, 4-criterion naming test, category patterns, element-first handler naming, `Inputs` prop-bag naming     | `docs/naming-conventions.md`             |
+| Three-tier doc architecture, zero-personal-data rule, story conventions                                                   | `docs/documentation-strategy.md`         |
+| sx array-safety, `...other` passthrough, icon slots, `shouldForwardProp`                                                  | `docs/component-api-contract.md`         |
+| WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule                                                            | `docs/accessibility.md`                  |
+| Vitest patterns, style test pattern, coverage requirements, mock rules                                                    | `docs/testing.md`                        |
+| TypeScript type ownership (companion file, promotion rule, entry points)                                                  | `docs/typescript-conventions.md`         |
+| Script language choice, per-language minimums, verification                                                               | `docs/script-authoring.md`               |
+| Decomposing cascading state-sync logic, refactor sequencing, extracting demo/fixture data                                 | `docs/component-refactor-conventions.md` |
 
 Raw base URL for expanded docs:
 `https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/docs/<filename>`
@@ -84,6 +85,7 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 12. [Sensitive File Encryption](#12-sensitive-file-encryption)
 13. [Private Extension](#13-private-extension)
 14. [Script Authoring](#14-script-authoring)
+15. [Component Refactor Conventions](#15-component-refactor-conventions)
 
 T. [TypeScript Type Ownership](#t--typescript-type-ownership)
 
@@ -877,6 +879,26 @@ State in the PR what you ran and what it produced.
 > judgement, not received practice. See `docs/roadmap.md` Phase E on citing rules.
 
 Rationale, per-language detail and worked examples: `docs/script-authoring.md`
+
+---
+
+## 15. Component Refactor Conventions
+
+Framework-agnostic — applies when bringing an already-structured, multi-file component tree up to this repo's quality bar without changing its behaviour, regardless of stack. Use these conventions once a component's folders, types, styles, and tests already exist (§5) but a review has surfaced untested cascading logic, a batched refactor pass with no verification checkpoints, or hardcoded demo/fixture data.
+
+### 15.1 — Decomposing cascading state-sync logic
+
+When a state update cascades — a child toggle that may also flip its parent's state, which may itself cascade further — do not leave that cascade written inline inside the callback. Split it into named, single-purpose functions, one per cascade direction, shared across every caller that needs it, each backed by pure, independently unit-tested derivation functions with no framework dependency. Signals this applies: more than one level of "if this changed, maybe update the parent too" nested in a callback, an inline `.every(...)`-style sibling-done check duplicated at more than one call site, or a single-letter/generic key variable inside that logic. Full rationale and a worked example: [`docs/component-refactor-conventions.md`](./component-refactor-conventions.md#decomposing-cascading-state-sync-logic).
+
+### 15.2 — Sequencing one group at a time
+
+Apply these conventions to one tightly-coupled component/file group at a time — not batched across a whole tree in one shot. A group is a component and its own sub-component folder(s) only ever consumed together. Run the project's full quality gate after each step and keep it green before moving to the next; this sequencing rule layers on top of, not instead of, whatever step-ordering a project's own structural-cleanup doc already specifies for work _within_ one component. Full rationale: [`docs/component-refactor-conventions.md`](./component-refactor-conventions.md#sequencing-one-group-at-a-time).
+
+### 15.3 — Extracting demo and fixture data to a dedicated module
+
+A component's demo or fixture data — Storybook, preview, or whatever a project's equivalent is — lives in a dedicated factory-function module, never hardcoded inline in the story or demo file; this is the same principle as §8.4, applied here as a signal to look for during a refactor pass over an existing component. Full rationale and a labeled example of one implementation of this pattern: [`docs/component-refactor-conventions.md`](./component-refactor-conventions.md#extracting-demo-and-fixture-data-to-a-dedicated-module).
+
+Full guide: `docs/component-refactor-conventions.md`
 
 ---
 
