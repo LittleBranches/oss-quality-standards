@@ -170,3 +170,79 @@ When a component is renamed, update all of these in one commit:
 8. Any `displayName` set on the component
 
 Use `git mv` for the folder rename so git tracks the history.
+
+---
+
+## Element-first handler naming
+
+> The baseline rule is in [AGENTS.md §7.5](./AGENTS.md#75--element-first-handler-naming).
+
+A function assigned directly to a JSX prop is named `<Element><Event>` — `Element` is the component or DOM node it's bound to, `Event` is the prop name with `on` dropped. A function bound to `MetricCard`'s `onExpand` prop is named `metricCardExpand`; a function bound to a row's `onClick` is named `rowClick`.
+
+A `handle*`-prefixed or bare name (`handleExpand`, `handler`) tells you this is _a_ handler, not _which_ element it's bound to or what fires it. Reading `metricCardExpand` at its declaration and at its JSX call site both tell you the same thing without tracing the wiring back through the file.
+
+### Shared core function vs. thin, element-first wrapper
+
+A function used by more than one call site keeps a plain, non-element-prefixed name describing the business logic it performs (`toggleExpanded`, `dismissNotification`). Each call site that binds that shared function to a specific JSX prop gets its own thin, element-first wrapper:
+
+```tsx
+// shared core function — plain name, used by more than one caller
+function toggleExpanded(key: string) {
+  /* ... */
+}
+
+// call-site wrappers — thin, element-first
+const cardExpandToggle = () => toggleExpanded(card.key);
+const rowExpandToggle = () => toggleExpanded(row.key);
+```
+
+Do not element-prefix the shared function itself — that would make it read as belonging to whichever element happened to be renamed first, when it's actually shared logic.
+
+### Documented exception: action-first naming for non-JSX-bound listeners
+
+A callback with no single bound JSX element — most commonly a `document.addEventListener` or `window.addEventListener` callback — is named action-first instead, describing what it does when it fires. This is a deliberate, documented carve-out from element-first naming, not a violation of it: there is no single element to put first.
+
+```tsx
+// Named action-first (not element-first): this is a global document listener, not
+// a callback bound to one specific JSX element/prop, so there's no single "element"
+// to put first — a deliberate, named exception to element-first naming.
+useEffect(() => {
+  const collapseAllOnOutsideClick = () => setExpandedKey(null);
+  document.addEventListener('click', collapseAllOnOutsideClick);
+  return () => document.removeEventListener('click', collapseAllOnOutsideClick);
+}, []);
+```
+
+Carry the same one-line comment (or equivalent) at the declaration whenever this exception is invoked, so a future reader doesn't mistake it for an inconsistency in the element-first rule.
+
+---
+
+## Inputs prop-bag naming
+
+> The baseline rule is in [AGENTS.md §7.6](./AGENTS.md#76--inputs-prop-bag-naming).
+
+A prop-bag type holding everything a row or item needs, computed once by its parent, is named `<Component>Inputs` — never `Ctx` or `Context`. Its prop on the receiving component is named `inputs`. Every local variable holding one of these objects is the exact camelCase of its type name, with no shortening, ever: a `MetricCardInputs` value is always a `metricCardInputs` variable, never `ctx`, `mci`, or `inputs` outside the destructured prop itself.
+
+`ctx`/`Ctx` reads as React's own Context API to anyone skimming the file, when this is a plain, explicitly-threaded prop — no `Provider`, no `useContext`, no implicit distant coupling. `Inputs` removes that ambiguity, and the variable-name lockstep removes any per-file judgment call about how much to abbreviate.
+
+```tsx
+// types.ts
+export interface MetricCardInputs {
+  value: number;
+  trend: 'up' | 'down' | 'flat';
+  onExpand: () => void;
+}
+
+// parent.tsx
+const metricCardInputs: MetricCardInputs = { value, trend, onExpand: cardExpandToggle };
+<MetricCard inputs={metricCardInputs} />;
+
+// metric-card.tsx
+function MetricCard({ inputs }: { inputs: MetricCardInputs }) {
+  /* ... */
+}
+```
+
+### Measure-chain naming: one name at every layer
+
+When a single concept crosses several component layers — a prop passed down, transformed, and passed down again — use the same name at every layer. Don't relabel it per hop. If a measurement callback is named `onMeasure` at the top of the chain, it stays `onMeasure` in every intermediate `Inputs` type it passes through, all the way down to the ref callback that finally uses it; only the local function bound to it at each call site is renamed per element-first naming (see above). This is the same principle as the `Inputs` variable-name lockstep, applied to a value that threads through more than one prop bag.

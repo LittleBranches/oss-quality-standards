@@ -34,21 +34,21 @@ This file contains all enforceable rules. Load it and you have everything needed
 
 The `docs/` folder in this repo contains expanded guides for each section below. They are for humans browsing the site and for agents that need more context on a specific rule. Consult them when the rule alone is not enough:
 
-| You need                                                                 | Fetch this doc                      |
-| ------------------------------------------------------------------------ | ----------------------------------- |
-| What to look for when reviewing a PR (priority order, full checklist)    | `docs/code-review-guide.md`         |
-| Real ✅/❌/⚠️/⏸️ response examples, edge cases for review threads        | `docs/pr-review-workflow.md`        |
-| Gray area decisions on what requires approval vs what AI can do freely   | `docs/ai-collaboration-protocol.md` |
-| What N/A means on the DoD checklist, common "not done" patterns          | `docs/definition-of-done.md`        |
-| Migration steps, barrel export examples, scaffolding a new component     | `docs/component-structure.md`       |
-| Setup for a new repo, troubleshooting a failing gate check               | `docs/quality-gate.md`              |
-| Suffix vocabulary, 4-criterion naming test, category patterns            | `docs/naming-conventions.md`        |
-| Three-tier doc architecture, zero-personal-data rule, story conventions  | `docs/documentation-strategy.md`    |
-| sx array-safety, `...other` passthrough, icon slots, `shouldForwardProp` | `docs/component-api-contract.md`    |
-| WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule           | `docs/accessibility.md`             |
-| Vitest patterns, style test pattern, coverage requirements, mock rules   | `docs/testing.md`                   |
-| TypeScript type ownership (companion file, promotion rule, entry points) | `docs/typescript-conventions.md`    |
-| Script language choice, per-language minimums, verification              | `docs/script-authoring.md`          |
+| You need                                                                                                                  | Fetch this doc                      |
+| ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| What to look for when reviewing a PR (priority order, full checklist)                                                     | `docs/code-review-guide.md`         |
+| Real ✅/❌/⚠️/⏸️ response examples, edge cases for review threads                                                         | `docs/pr-review-workflow.md`        |
+| Gray area decisions on what requires approval vs what AI can do freely                                                    | `docs/ai-collaboration-protocol.md` |
+| What N/A means on the DoD checklist, common "not done" patterns                                                           | `docs/definition-of-done.md`        |
+| Migration steps, barrel export examples, scaffolding a new component, standalone-vs-sub-component test, promotion trigger | `docs/component-structure.md`       |
+| Setup for a new repo, troubleshooting a failing gate check                                                                | `docs/quality-gate.md`              |
+| Suffix vocabulary, 4-criterion naming test, category patterns, element-first handler naming, `Inputs` prop-bag naming     | `docs/naming-conventions.md`        |
+| Three-tier doc architecture, zero-personal-data rule, story conventions                                                   | `docs/documentation-strategy.md`    |
+| sx array-safety, `...other` passthrough, icon slots, `shouldForwardProp`                                                  | `docs/component-api-contract.md`    |
+| WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule                                                            | `docs/accessibility.md`             |
+| Vitest patterns, style test pattern, coverage requirements, mock rules                                                    | `docs/testing.md`                   |
+| TypeScript type ownership (companion file, promotion rule, entry points)                                                  | `docs/typescript-conventions.md`    |
+| Script language choice, per-language minimums, verification                                                               | `docs/script-authoring.md`          |
 
 Raw base URL for expanded docs:
 `https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/docs/<filename>`
@@ -428,6 +428,25 @@ src/components/inputs/button/toggle/icon/
 
 Shallower components use the full folder name: `metric-card.tsx`, `radial-progress-card.tsx`.
 
+### 5.6 — Standalone-vs-sub-component test
+
+Before any structural work, decide: is this component **independently usable by a consumer**, or does it only make sense inside one specific parent?
+
+| Signal                                                          | Role                                          |
+| --------------------------------------------------------------- | --------------------------------------------- |
+| Exported from the package's public barrel                       | Standalone — needs its own subfolder          |
+| Marked "shipped" in a component inventory/tracking doc          | Standalone                                    |
+| Marked "internal" in a component inventory/tracking doc         | Sub-component                                 |
+| Lives inside a parent component's own subfolder                 | Sub-component — needs its own named subfolder |
+| Only imported by one sibling file in the same folder            | Sub-component                                 |
+| Has its own props type but is never consumed outside its folder | Sub-component                                 |
+
+Confusing the two roles produces the wrong folder depth and the wrong barrel exports for every step that follows. A standalone component is not automatically exported from the package's public barrel either — that is a separate, follow-on question. Full rationale for both: [`docs/component-structure.md`](./component-structure.md#deciding-whether-a-component-is-standalone-or-a-sub-component).
+
+### 5.7 — Promotion trigger
+
+When extracting a duplicated JSX pattern into its own component, do not promote it up the component tree speculatively. Keep it at the narrowest level it actually serves until a **second concrete caller** appears elsewhere in the codebase — only then rename, generalize, promote, and re-export. Full rationale: [`docs/component-structure.md`](./component-structure.md#promotion-trigger--wait-for-a-second-real-caller).
+
 ---
 
 ## 6. Component API Contract
@@ -574,6 +593,14 @@ Before naming a component: (1) is the name a noun describing what it renders? (2
 ### 7.4 — Hook naming
 
 Files: `use-<name>.ts`. Exported function: `use<Name>`.
+
+### 7.5 — Element-first handler naming
+
+A function assigned directly to a JSX prop is named `<Element><Event>` — the element it's bound to, then the prop name with `on` dropped. A function shared by more than one call site keeps a plain, non-element-prefixed name; each call site gets its own thin, element-first wrapper. Documented exception: a callback with no single bound JSX element (e.g. a global `document`/`window` event listener) is named action-first instead, with a one-line comment marking it as the deliberate exception. Full rationale and worked examples: [`docs/naming-conventions.md`](./naming-conventions.md#element-first-handler-naming).
+
+### 7.6 — Inputs prop-bag naming
+
+A prop-bag type holding everything a row or item needs, computed once by its parent, is named `<Component>Inputs` — never `Ctx` or `Context`. Its prop is `inputs`; every local variable holding one is the exact camelCase of its type name, never shortened. When the same concept crosses several component layers, use the same field/variable name at every layer instead of relabeling per hop (the "measure-chain" rule). Full rationale and worked examples: [`docs/naming-conventions.md`](./naming-conventions.md#inputs-prop-bag-naming).
 
 ---
 
