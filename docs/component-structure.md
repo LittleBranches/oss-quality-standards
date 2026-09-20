@@ -10,6 +10,57 @@ sidebar_position: 6
 
 ---
 
+## Deciding whether a component is standalone or a sub-component
+
+> The rule is in [AGENTS.md §5.6](./AGENTS.md#56--standalone-vs-sub-component-test).
+
+Before creating any folder, decide whether a component is **independently usable by a consumer**, or whether it **only makes sense inside one specific parent**. Get this wrong and the rest of this guide — folder depth, barrel exports, required companion files — targets the wrong scenario.
+
+Use this table of signals:
+
+| Signal                                                          | Role                                          |
+| --------------------------------------------------------------- | --------------------------------------------- |
+| Exported from the package's public barrel                       | Standalone — needs its own subfolder          |
+| Marked "shipped" in a component inventory/tracking doc          | Standalone                                    |
+| Marked "internal" in a component inventory/tracking doc         | Sub-component                                 |
+| Lives inside a parent component's own subfolder                 | Sub-component — needs its own named subfolder |
+| Only imported by one sibling file in the same folder            | Sub-component                                 |
+| Has its own props type but is never consumed outside its folder | Sub-component                                 |
+
+Don't skip this test. Confusing the two roles leads to the wrong folder structure and the wrong barrel exports for every step that follows.
+
+### A second question: should a standalone component be exported from the public barrel?
+
+Folder structure and barrel export are two separate decisions. A standalone component living in its own subfolder is not automatically exported from the package's top-level public barrel — it has to earn that.
+
+Answer these four questions in order. Stop at the first "yes":
+
+1. **Could a second project use this exactly as-is?** If another consuming app — present or future — would want to import this component directly, it belongs in the public barrel.
+2. **Is it used in more than one place in the consuming app?** Multiple independent usages signal it encodes something reusable, not something app-specific.
+3. **Is it already marked "shipped" or as a public entry point in the component inventory/tracking doc?** If so, the decision was already made — add it to the barrel. ("Internal" means the opposite: it was deliberately kept private.)
+4. **Does it encode an accessibility or design rule that's non-trivial to get right?** Correct ARIA wiring, style-merge safety, minimum touch targets, alignment invariants — anything a developer would silently get wrong without this component.
+
+If any answer is yes, export the component from the public barrel. If all four are no, keep it private: it's still exported from its own folder's `index.ts` (so the parent can import it cleanly), but it does not appear in the package's public barrel. A false export implies the component is independently useful when it isn't.
+
+A sub-component should almost never be exported from the public barrel. The only exception is a sub-component that answers "yes" to all four questions above, and that a consumer would realistically import on its own. When in doubt, keep it private.
+
+---
+
+## Promotion trigger — wait for a second real caller
+
+> The rule is in [AGENTS.md §5.7](./AGENTS.md#57--promotion-trigger).
+
+When you extract a duplicated JSX pattern into its own component, resist promoting it up the component tree speculatively. Keep the extracted component at the narrowest level it actually serves until a **second concrete caller** actually appears somewhere else in the codebase.
+
+Two signals make early promotion tempting, and both are wrong to act on:
+
+- **The styles are specific to the current use case.** A second caller would need to override them to undo that specificity — net zero benefit today, and a false promise of reuse.
+- **The logic is simple enough that any developer would write it correctly without help.** The rule underneath every component-library convention in this guide is that a component earns its place by saving other developers from rediscovering something non-obvious. A component with no non-obvious logic hasn't earned a shared home yet.
+
+When a second caller does appear, that's the correct moment to rename the component for its wider scope, generalize any style props, promote it up the tree, and re-export it. Not before.
+
+---
+
 ## Why one component per folder?
 
 Three problems with flat component files:
