@@ -36,17 +36,17 @@ The `sx` prop is inherited automatically when extending MUI component props. Do 
 
 **Extend the type that matches your actual root element** — not a generic or unrelated one. If the component renders a MUI `<Card>` as its root, extend `CardProps`; if it renders `<Paper>`, extend `PaperProps`. Extending a broader or mismatched MUI type (e.g. `BoxProps` when the root is actually a `Card`) lets props that don't apply to the rendered element type-check anyway.
 
-When a custom prop needs to narrow or override a member the extended type already declares — for example, restricting `color` to a fixed set of palette keys instead of MUI's broader `color` type — `Omit` the conflicting member before re-declaring it. Declaring the narrower prop alongside the wider inherited one (without `Omit`) creates a type conflict, or silently lets the wider inherited type win:
+TypeScript already allows narrowing an inherited prop to a subtype without any extra work — restricting `color` to a subset of MUI's own union type-checks on its own. `Omit` is only required once the member you're re-declaring is **not** assignable to the inherited one — most commonly, a value the MUI type doesn't already allow (e.g. a custom palette key). Omit the conflicting member first, then re-declare it:
 
 ```ts
-// ✅ correct — narrows an inherited prop via Omit
+// ✅ correct — 'brand' isn't part of ChipProps' own `color` union, so Omit is required
 export interface StatusBadgeProps extends Omit<ChipProps, 'color'> {
-  color?: 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
+  color?: 'brand' | 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
 }
 
-// ❌ wrong — declares a narrower `color` without omitting the wider inherited one
+// ❌ wrong — 'brand' isn't assignable to ChipProps' own `color` type; without Omit this fails to compile
 export interface StatusBadgeProps extends ChipProps {
-  color?: 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
+  color?: 'brand' | 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
 }
 ```
 

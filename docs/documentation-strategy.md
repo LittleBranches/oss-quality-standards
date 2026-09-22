@@ -148,7 +148,7 @@ When a component does have a `roadmap.md`, use this template shape:
 
 ## Status
 
-`<status>` _(use your project's own maturity vocabulary, defined once in your project's own docs and reused consistently — e.g. `experimental`/`stable`, or a finer-grained scale like `alpha`/`beta`/`stable`/`lts`)_
+`<status>` _(use your project's own maturity vocabulary, defined once in your project's own docs and reused consistently across every `roadmap.md` — e.g. a two-value scale like `experimental`/`stable`, or a finer-grained one like `draft`/`in-review`/`active`/`deprecated`)_
 
 One sentence on the current state of the component.
 
@@ -174,7 +174,7 @@ Rules:
 - Status values: `⬜` not started · `🔄` in progress · `✅` done.
 - When a task moves from "Open improvements" to "Completed", record the date rather than deleting it — the file is a running history, not just a current snapshot.
 - Update `> Last updated:` every time the file is edited.
-- The zero-personal-data rule above applies here too: no personal names, client names, or content that could not safely appear in a public repository.
+- The zero-personal-data rule above applies here too.
 
 ### Docusaurus docs/
 

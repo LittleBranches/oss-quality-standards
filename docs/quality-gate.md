@@ -128,7 +128,7 @@ Guidelines:
 
 Automated checks (types, lint, tests, build) confirm the package is internally consistent and its own test suite passes. They cannot catch everything that only surfaces once the built package is actually consumed by a real app — a wrong `exports` path, a peer-dependency mismatch, a subtly broken bundle output, or a runtime error that only appears once real app code imports and renders the change.
 
-Before considering a library change done, publish it locally and rebuild a real consumer app against it, then confirm the change behaves as expected there — not just that the package's own gate is green.
+Before considering a library change done, link the built package into a real consumer app locally and rebuild it there, then confirm the change behaves as expected — not just that the package's own gate is green. This is a local dev-loop step, distinct from publishing to a registry (see [`AGENTS.md` §1.2](./AGENTS.md#1-ai-collaboration-protocol)), which still requires its own separate approval.
 
 The concrete mechanism varies by repo and tooling. One common approach: link the local package into a consumer app with a local-package tool such as [`yalc`](https://github.com/wclr/yalc) (push the package, then reinstall and rebuild in the consumer), but `npm link`, a workspace `file:` dependency, or any other local-linking mechanism a repo already uses works equally well. The requirement is the validation step itself, not any specific tool.
 
