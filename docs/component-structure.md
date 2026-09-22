@@ -22,7 +22,7 @@ Use this table of signals:
 | --------------------------------------------------------------- | --------------------------------------------- |
 | Exported from the package's public barrel                       | Standalone — needs its own subfolder          |
 | Marked "shipped" in a component inventory/tracking doc          | Standalone                                    |
-| Marked "internal" in a component inventory/tracking doc         | Sub-component — needs its own subfolder       |
+| Marked "internal" in a component inventory/tracking doc         | Sub-component — needs its own named subfolder |
 | Lives inside a parent component's own subfolder                 | Sub-component — needs its own named subfolder |
 | Only imported by one sibling file in the same folder            | Sub-component — needs its own named subfolder |
 | Has its own props type but is never consumed outside its folder | Sub-component — needs its own named subfolder |
