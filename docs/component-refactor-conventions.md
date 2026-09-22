@@ -84,11 +84,36 @@ function makeChildStateKey(parentKey, childIndex) {
 
 ## Extracting demo and fixture data to a dedicated module
 
-> The baseline rule is in [AGENTS.md §15.3](./AGENTS.md#153--extracting-demo-and-fixture-data-to-a-dedicated-module). This repo already states a version of this rule for authoring new stories in [AGENTS.md §8.4](./AGENTS.md#84--demo-and-fixture-content-extraction), including the full structure and rationale — this section doesn't restate either; it applies the same principle as a signal to look for during a refactor pass over an _existing_ component, and adds the one labeled real-world example below.
+> The baseline rule is in [AGENTS.md §15.3](./AGENTS.md#153--extracting-demo-and-fixture-data-to-a-dedicated-module). This repo already states a version of this rule for authoring new stories in [AGENTS.md §8.4](./AGENTS.md#84--demo-and-fixture-content-extraction), including the full structure and rationale — this section doesn't restate either; it applies the same principle as a signal to look for during a refactor pass over an _existing_ component, and adds the labeled examples below: a sibling-comparison detection method plus LittleBranches' own real-world implementation of the dedicated-module pattern.
 
 **Rule:** a component's demo or fixture data — Storybook, preview, or whatever a project's equivalent is — lives in a dedicated factory-function module, never hardcoded inline in the story or demo file itself. See §8.4 for the full structure and rationale.
 
 **Signal during a refactor:** a hardcoded content block sitting inside a story or demo file for a component you're otherwise cleaning up is itself a sign the pass isn't finished — extract it the same way §8.4 already requires for newly authored stories.
+
+**Detection method — sibling comparison:** the clearest signal that a piece of content belongs in a dedicated module rarely comes from staring at the target component in isolation — it comes from comparing it against every sibling of similar shape (same layer, same category, the same role in a family of related components). If every sibling already sources the same _kind_ of content — a list, a single string, a media reference — from a dedicated module, and the target component hardcodes that same kind inline instead, the inconsistency itself is the signal to extract, regardless of how large or small the hardcoded value is. A large array of demo cards is the obvious case, but a single hardcoded heading or caption string is the same violation in miniature, and sibling comparison catches it the same way a "does this look like a big block of content" skim never would.
+
+This refines, not contradicts, §8.4's "a single label is fine inline" default: that default is for a genuinely standalone single label with no established pattern among siblings. Once every sibling of the same shape already sources that kind of content from a dedicated module, staying consistent with the siblings takes priority over the size-based default for this component.
+
+**Worked example — a single heading string, not a list:**
+
+Four sibling card components in the same family — `pricing-card`, `feature-card`, `testimonial-card`, `metric-card` — each source their `title` from that card's own fixtures module:
+
+```tsx
+// pricing-card/pricing-card.stories.tsx
+import { createPricingCardDemoData } from './__fixtures__/pricing-card.fixtures';
+
+const demoData = createPricingCardDemoData();
+<PricingCard title={demoData.title} />;
+```
+
+A fifth sibling, `testimonial-card`, hardcodes its heading directly in the story instead:
+
+```tsx
+// testimonial-card/testimonial-card.stories.tsx  ❌
+<TestimonialCard title="What our customers say" />
+```
+
+Nothing about `"What our customers say"` looks like a violation on its own — it's a single short string, not a list, and would pass a skim that only flags large content blocks. Comparing `testimonial-card` against its four siblings is what surfaces the gap: every sibling of the same shape sources its heading from a dedicated fixtures module, and this one does not. The fix is the same as for list-shaped content — move the string into `testimonial-card/__fixtures__/testimonial-card.fixtures.ts` behind a `createTestimonialCardDemoData()` factory, and import it the same way the other four siblings already do.
 
 **LittleBranches' own implementation of this pattern** uses a `sections-api/<component-name>/` domain and a companion `giselle-sections-sdk` package — a barrel of factory functions per component, kept separate from any one-off consumer-parity data file. This is our implementation of the general principle above, not a requirement of the principle itself; a project without either of those can satisfy the same rule with a single fixtures file per component, per §8.4's own example.
 
