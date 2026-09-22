@@ -59,6 +59,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'doc',
+      id: 'component-configuration-conventions',
+      label: 'Component Configuration Conventions',
+    },
+    {
+      type: 'doc',
       id: 'documentation-strategy',
       label: 'Documentation Strategy',
     },

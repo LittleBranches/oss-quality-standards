@@ -34,22 +34,23 @@ This file contains all enforceable rules. Load it and you have everything needed
 
 The `docs/` folder in this repo contains expanded guides for each section below. They are for humans browsing the site and for agents that need more context on a specific rule. Consult them when the rule alone is not enough:
 
-| You need                                                                                                                  | Fetch this doc                           |
-| ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| What to look for when reviewing a PR (priority order, full checklist)                                                     | `docs/code-review-guide.md`              |
-| Real ✅/❌/⚠️/⏸️ response examples, edge cases for review threads                                                         | `docs/pr-review-workflow.md`             |
-| Gray area decisions on what requires approval vs what AI can do freely                                                    | `docs/ai-collaboration-protocol.md`      |
-| What N/A means on the DoD checklist, common "not done" patterns                                                           | `docs/definition-of-done.md`             |
-| Migration steps, barrel export examples, scaffolding a new component, standalone-vs-sub-component test, promotion trigger | `docs/component-structure.md`            |
-| Setup for a new repo, troubleshooting a failing gate check                                                                | `docs/quality-gate.md`                   |
-| Suffix vocabulary, 4-criterion naming test, category patterns, element-first handler naming, `Inputs` prop-bag naming     | `docs/naming-conventions.md`             |
-| Three-tier doc architecture, zero-personal-data rule, story conventions                                                   | `docs/documentation-strategy.md`         |
-| sx array-safety, `...other` passthrough, icon slots, `shouldForwardProp`                                                  | `docs/component-api-contract.md`         |
-| WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule                                                            | `docs/accessibility.md`                  |
-| Vitest patterns, style test pattern, coverage requirements, mock rules                                                    | `docs/testing.md`                        |
-| TypeScript type ownership (companion file, promotion rule, entry points)                                                  | `docs/typescript-conventions.md`         |
-| Script language choice, per-language minimums, verification                                                               | `docs/script-authoring.md`               |
-| Decomposing cascading state-sync logic, refactor sequencing, extracting demo/fixture data                                 | `docs/component-refactor-conventions.md` |
+| You need                                                                                                                  | Fetch this doc                                |
+| ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| What to look for when reviewing a PR (priority order, full checklist)                                                     | `docs/code-review-guide.md`                   |
+| Real ✅/❌/⚠️/⏸️ response examples, edge cases for review threads                                                         | `docs/pr-review-workflow.md`                  |
+| Gray area decisions on what requires approval vs what AI can do freely                                                    | `docs/ai-collaboration-protocol.md`           |
+| What N/A means on the DoD checklist, common "not done" patterns                                                           | `docs/definition-of-done.md`                  |
+| Migration steps, barrel export examples, scaffolding a new component, standalone-vs-sub-component test, promotion trigger | `docs/component-structure.md`                 |
+| Setup for a new repo, troubleshooting a failing gate check                                                                | `docs/quality-gate.md`                        |
+| Suffix vocabulary, 4-criterion naming test, category patterns, element-first handler naming, `Inputs` prop-bag naming     | `docs/naming-conventions.md`                  |
+| Three-tier doc architecture, zero-personal-data rule, story conventions                                                   | `docs/documentation-strategy.md`              |
+| sx array-safety, `...other` passthrough, icon slots, `shouldForwardProp`                                                  | `docs/component-api-contract.md`              |
+| WCAG 2.2 AA rules, focus rings, ARIA patterns, eye-button rule                                                            | `docs/accessibility.md`                       |
+| Vitest patterns, style test pattern, coverage requirements, mock rules                                                    | `docs/testing.md`                             |
+| TypeScript type ownership (companion file, promotion rule, entry points)                                                  | `docs/typescript-conventions.md`              |
+| Script language choice, per-language minimums, verification                                                               | `docs/script-authoring.md`                    |
+| Decomposing cascading state-sync logic, refactor sequencing, extracting demo/fixture data                                 | `docs/component-refactor-conventions.md`      |
+| Extracting Grid/layout literals, motion `variants`/`animate`/`transition`/`style`, single scalar/enum-token props         | `docs/component-configuration-conventions.md` |
 
 Raw base URL for expanded docs:
 `https://raw.githubusercontent.com/LittleBranches/oss-quality-standards/main/docs/<filename>`
@@ -86,6 +87,7 @@ These two commands are distinct. `review pr <N>` makes you the reviewer. `respon
 13. [Private Extension](#13-private-extension)
 14. [Script Authoring](#14-script-authoring)
 15. [Component Refactor Conventions](#15-component-refactor-conventions)
+16. [Component Configuration Conventions](#16-component-configuration-conventions)
 
 T. [TypeScript Type Ownership](#t--typescript-type-ownership)
 
@@ -903,6 +905,28 @@ A component's demo or fixture data — Storybook, preview, or whatever a project
 **Detection method — sibling comparison:** compare the target component against every sibling of similar shape (same layer, same category, same role in a family of related components). If every sibling sources the same _kind_ of content from a dedicated module and the target hardcodes that same kind inline instead, that inconsistency is the signal to extract — regardless of content shape. This applies equally to a single hardcoded heading or caption string as it does to a large list of demo content; a one-line string is not exempt from this signal just because it isn't list-shaped. This refines, not contradicts, §8.4's "a single label is fine inline" default: that default is for a label with no established pattern among siblings — once every sibling of the same shape already sources that kind of content from a dedicated module, consistency with the siblings takes priority over the size-based default for this component. Full rationale and a labeled example of one implementation of this pattern: [`docs/component-refactor-conventions.md`](./component-refactor-conventions.md#extracting-demo-and-fixture-data-to-a-dedicated-module).
 
 Full guide: `docs/component-refactor-conventions.md`
+
+---
+
+## 16. Component Configuration Conventions
+
+Applies to any inline configuration literal — a value that shapes how a rendered element behaves or is laid out, not what content it shows — left directly in JSX instead of extracted to a named constant in the component's own `<name>.const.ts`. Covers three shapes: Grid/layout literals, motion `variants`/`animate`/`transition`/`style` objects, and single scalar/enum-token prop values. This is a distinct topic from §15's decomposition/sequencing/data-sourcing focus, and from §8.4/§15.3's content-sourcing rules — content (copy, images, hrefs, lists of real data) is a different axis from configuration (how a rendered element is set up).
+
+### 16.1 — Grid and layout literal extraction
+
+An inline layout-shaping literal — a responsive breakpoint object, a spacing value — passed directly to a layout prop (`size`, `rowSpacing`, `columnSpacing`, `spacing`, or similar) must be extracted to a named constant in the component's own `<name>.const.ts`. Full guide + example: [`docs/component-configuration-conventions.md`](./component-configuration-conventions.md#grid-and-layout-literal-extraction).
+
+### 16.2 — Motion configuration extraction
+
+A `variants` object on a `motion.*` element is always a named export, regardless of key count. An `animate` or `transition` object may keep a single trivially-obvious key inline, but two or more keys must be extracted the same way. A `style` object on a `motion.*` element has zero tolerance for inline literals, regardless of property count: a static `style` object is a module-level constant; a `MotionValue`-based `style` object is a factory function that accepts the `MotionValue` argument(s) and returns the style object, called from JSX. Full guide + examples: [`docs/component-configuration-conventions.md`](./component-configuration-conventions.md#motion-configuration-extraction).
+
+### 16.3 — Single scalar and enum-token prop extraction
+
+A single hardcoded scalar or enum-token value handed straight to a prop (e.g. `titleComponent="h3"`) is the same shape of violation as the multi-value cases above, just smaller, and gets the same extraction treatment. This does not apply to `children` or any other content prop already governed by §8.4/§15.3. Full guide + example: [`docs/component-configuration-conventions.md`](./component-configuration-conventions.md#single-scalar-and-enum-token-prop-extraction).
+
+**Shared requirement across all three:** every extracted constant must carry an explicit type annotation naming the exact prop type it configures — never bare inference, even when the right-hand side is a call whose own return type already happens to match. Full rationale: [`docs/component-configuration-conventions.md`](./component-configuration-conventions.md#the-shared-explicit-typing-requirement).
+
+Full guide: `docs/component-configuration-conventions.md`
 
 ---
 
