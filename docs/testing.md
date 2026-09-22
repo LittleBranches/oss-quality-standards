@@ -14,6 +14,15 @@ sidebar_position: 12
 
 All tests run with [Vitest](https://vitest.dev/) and [jsdom](https://github.com/jsdom/jsdom). The test environment is configured in `vite.config.ts` (or `vitest.config.ts`).
 
+If the project's Vitest config scopes the environment per file glob (for example, style tests run under `node` while component tests need a real DOM — see "Style tests" below), add an explicit directive at the top of every test file that renders a component, rather than relying on the global default:
+
+```ts
+// @vitest-environment jsdom
+import React from 'react';
+```
+
+This keeps each test file's environment requirement visible and correct on its own, even if the global default changes later.
+
 Test files live inside the component folder, co-located with the source:
 
 ```
@@ -59,7 +68,12 @@ it('renders the value and label', () => {
 });
 ```
 
-Use `@testing-library/react` when you need user interaction, event handling, or state transitions.
+`React.createElement` (rather than JSX) matters specifically in a `.ts` test file: JSX syntax requires a `.tsx` extension (or a JSX-aware transform) to parse, and `React.createElement` produces the same element tree without either.
+
+**`renderToStaticMarkup` vs. a mounted, interactive render.** These two patterns test different things and are not interchangeable:
+
+- `renderToStaticMarkup` (shown above) never mounts to a real DOM and never re-renders — use it only for structure/ARIA assertions on static output. It cannot observe state changes, effects, or event handling.
+- For anything that involves user interaction, event handling, or state transitions, mount the component to a real DOM and wrap updates in `act` so React flushes state changes before you assert. `@testing-library/react`'s `render()` already does this for you (it wraps `ReactDOM.createRoot` + `act` internally) — reach for it directly rather than hand-rolling the mount, as the next section shows. If a project's test setup doesn't pull in `@testing-library/react`, the same distinction still applies using the underlying APIs directly: `ReactDOM.createRoot` to mount, `act` to flush updates around each interaction.
 
 ### Testing interactions
 
@@ -78,6 +92,22 @@ it('toggles password visibility', async () => {
   await userEvent.click(screen.getByRole('button', { name: 'Show password' }));
   expect(input).toHaveAttribute('type', 'text');
 });
+```
+
+### Meaningful assertions
+
+Every assertion in a test file must verify a real behaviour or contract:
+
+- No empty or placeholder assertions (e.g. `expect(true).toBe(true)`).
+- No `it.todo(...)` used to pad a coverage count. An untested case should either be tested now or tracked as a known gap outside the test file — not represented as a passing placeholder.
+- When a negative assertion is meant to constrain a whole category of values rather than one specific value (e.g. "never renders a hex colour", "never contains a raw email address"), use a regex that matches the category — not a check against one example value that simply happens to be absent today.
+
+```ts
+// ✅ correct — regex constrains the whole category
+expect(html).not.toMatch(/#[0-9a-f]{3,6}/i);
+
+// ❌ wrong — only rules out one specific value, not the category
+expect(html).not.toContain('#1a2027');
 ```
 
 ---

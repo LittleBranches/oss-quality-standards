@@ -34,6 +34,22 @@ export interface MetricCardProps {
 
 The `sx` prop is inherited automatically when extending MUI component props. Do not redeclare it.
 
+**Extend the type that matches your actual root element** — not a generic or unrelated one. If the component renders a MUI `<Card>` as its root, extend `CardProps`; if it renders `<Paper>`, extend `PaperProps`. Extending a broader or mismatched MUI type (e.g. `BoxProps` when the root is actually a `Card`) lets props that don't apply to the rendered element type-check anyway.
+
+TypeScript already allows narrowing an inherited prop to a subtype without any extra work — restricting `color` to a subset of MUI's own union type-checks on its own. `Omit` is only required once the member you're re-declaring is **not** assignable to the inherited one — most commonly, a value the MUI type doesn't already allow (e.g. a custom palette key). Omit the conflicting member first, then re-declare it:
+
+```ts
+// ✅ correct — 'brand' isn't part of ChipProps' own `color` union, so Omit is required
+export interface StatusBadgeProps extends Omit<ChipProps, 'color'> {
+  color?: 'brand' | 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
+}
+
+// ❌ wrong — 'brand' isn't assignable to ChipProps' own `color` type; without Omit this fails to compile
+export interface StatusBadgeProps extends ChipProps {
+  color?: 'brand' | 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
+}
+```
+
 ---
 
 ## `sx` array-safety rule
