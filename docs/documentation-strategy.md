@@ -135,6 +135,47 @@ Do not put API documentation in the README. That belongs in JSDoc (Tier 1).
 
 A component folder MAY have its own `README.md` when the component has non-obvious setup requirements (e.g. a required context provider, a peer dependency that must be installed separately, or a known accessibility constraint). These are rare. Most components do not need one.
 
+### Component folder roadmap
+
+A component folder MAY have its own `roadmap.md` tracking planned work, known gaps, and completed improvements specific to that component — distinct from a library-level roadmap, which summarises phases and milestones across the whole package. Not every component needs one; add it once a component has enough open work, known limitations, or maturity state worth tracking on its own.
+
+When a component does have a `roadmap.md`, use this template shape:
+
+```md
+# <ComponentName> — Roadmap
+
+> Last updated: DD Mon YYYY
+
+## Status
+
+`<status>` _(use your project's own maturity vocabulary, defined once in your project's own docs and reused consistently — e.g. `experimental`/`stable`, or a finer-grained scale like `alpha`/`beta`/`stable`/`lts`)_
+
+One sentence on the current state of the component.
+
+## Open improvements
+
+| Task                               | Priority | Status |
+| ---------------------------------- | -------- | ------ |
+| Description of planned improvement | Medium   | ⬜     |
+
+## Known gaps
+
+Bullet list of anything missing from the current implementation that is not yet in the table above (e.g. missing story variants, untested edge cases, accessibility gaps). Write "None" if there are no known gaps.
+
+## Completed
+
+| Task                                 | Completed   |
+| ------------------------------------ | ----------- |
+| Description of completed improvement | DD Mon YYYY |
+```
+
+Rules:
+
+- Status values: `⬜` not started · `🔄` in progress · `✅` done.
+- When a task moves from "Open improvements" to "Completed", record the date rather than deleting it — the file is a running history, not just a current snapshot.
+- Update `> Last updated:` every time the file is edited.
+- The zero-personal-data rule above applies here too: no personal names, client names, or content that could not safely appear in a public repository.
+
 ### Docusaurus docs/
 
 Docusaurus docs are for conceptual guides that span multiple components or address the library as a whole: architecture decisions, migration guides, theming guides, onboarding walkthroughs. They are NOT the right place for per-component API documentation.
