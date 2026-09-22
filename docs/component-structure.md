@@ -22,10 +22,12 @@ Use this table of signals:
 | --------------------------------------------------------------- | --------------------------------------------- |
 | Exported from the package's public barrel                       | Standalone — needs its own subfolder          |
 | Marked "shipped" in a component inventory/tracking doc          | Standalone                                    |
-| Marked "internal" in a component inventory/tracking doc         | Sub-component                                 |
+| Marked "internal" in a component inventory/tracking doc         | Sub-component — needs its own subfolder       |
 | Lives inside a parent component's own subfolder                 | Sub-component — needs its own named subfolder |
-| Only imported by one sibling file in the same folder            | Sub-component                                 |
-| Has its own props type but is never consumed outside its folder | Sub-component                                 |
+| Only imported by one sibling file in the same folder            | Sub-component — needs its own named subfolder |
+| Has its own props type but is never consumed outside its folder | Sub-component — needs its own named subfolder |
+
+**Every sub-component extracted out of a parent gets its own further-nested subfolder — unconditionally, with no size or complexity threshold that changes this.** There is no flat-file fallback for a sub-component, no matter how small or trivial it looks: a one-line wrapper sub-component still gets `<parent>/<child>/<child>.tsx` plus its own `index.ts`, exactly like a standalone component would, never a flat sibling file dropped directly inside the parent's folder. Judging "this one's simple enough to leave flat" case by case is exactly the drift this rule closes off.
 
 Don't skip this test. Confusing the two roles leads to the wrong folder structure and the wrong barrel exports for every step that follows.
 

@@ -438,10 +438,12 @@ Before any structural work, decide: is this component **independently usable by 
 | --------------------------------------------------------------- | --------------------------------------------- |
 | Exported from the package's public barrel                       | Standalone — needs its own subfolder          |
 | Marked "shipped" in a component inventory/tracking doc          | Standalone                                    |
-| Marked "internal" in a component inventory/tracking doc         | Sub-component                                 |
+| Marked "internal" in a component inventory/tracking doc         | Sub-component — needs its own subfolder       |
 | Lives inside a parent component's own subfolder                 | Sub-component — needs its own named subfolder |
-| Only imported by one sibling file in the same folder            | Sub-component                                 |
-| Has its own props type but is never consumed outside its folder | Sub-component                                 |
+| Only imported by one sibling file in the same folder            | Sub-component — needs its own named subfolder |
+| Has its own props type but is never consumed outside its folder | Sub-component — needs its own named subfolder |
+
+Every sub-component extracted out of a parent gets its own further-nested subfolder — unconditionally, with no size or complexity threshold that changes this. A trivially small sub-component is not an exception: it still gets `<parent>/<child>/<child>.tsx` plus its own `index.ts`, never a flat sibling file dropped directly inside the parent's folder. This supersedes any reading of the rules above as permitting a flat-file fallback for a sub-component on the basis of how little it does.
 
 Confusing the two roles produces the wrong folder depth and the wrong barrel exports for every step that follows. A standalone component is not automatically exported from the package's public barrel either — that is a separate, follow-on question. Full rationale for both: [`docs/component-structure.md`](./component-structure.md#deciding-whether-a-component-is-standalone-or-a-sub-component).
 
@@ -896,7 +898,9 @@ Apply these conventions to one tightly-coupled component/file group at a time �
 
 ### 15.3 — Extracting demo and fixture data to a dedicated module
 
-A component's demo or fixture data — Storybook, preview, or whatever a project's equivalent is — lives in a dedicated factory-function module, never hardcoded inline in the story or demo file; this is the same principle as §8.4, applied here as a signal to look for during a refactor pass over an existing component. Full rationale and a labeled example of one implementation of this pattern: [`docs/component-refactor-conventions.md`](./component-refactor-conventions.md#extracting-demo-and-fixture-data-to-a-dedicated-module).
+A component's demo or fixture data — Storybook, preview, or whatever a project's equivalent is — lives in a dedicated factory-function module, never hardcoded inline in the story or demo file; this is the same principle as §8.4, applied here as a signal to look for during a refactor pass over an existing component.
+
+**Detection method — sibling comparison:** compare the target component against every sibling of similar shape (same layer, same category, same role in a family of related components). If every sibling sources the same _kind_ of content from a dedicated module and the target hardcodes that same kind inline instead, that inconsistency is the signal to extract — regardless of content shape. This applies equally to a single hardcoded heading or caption string as it does to a large list of demo content; a one-line string is not exempt from this signal just because it isn't list-shaped. Full rationale and a labeled example of one implementation of this pattern: [`docs/component-refactor-conventions.md`](./component-refactor-conventions.md#extracting-demo-and-fixture-data-to-a-dedicated-module).
 
 Full guide: `docs/component-refactor-conventions.md`
 
