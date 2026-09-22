@@ -6,7 +6,7 @@ sidebar_position: 17
 
 # Component Configuration Conventions — Expanded Guide
 
-> The baseline rules are in [AGENTS.md §16](./AGENTS.md#16-component-configuration-conventions). This page covers the full methodology for extracting inline configuration literals — Grid/layout props, motion `variants`/`animate`/`transition`/`style` objects, and single scalar/enum-token prop values — to named, explicitly-typed constants in a component's own `<name>.const.ts`.
+> The baseline rules are in [AGENTS.md §16](./AGENTS.md#16-component-configuration-conventions). This page covers the full methodology for extracting inline configuration literals — Grid/layout props, motion `variants`/`animate`/`transition`/`style` objects, and single scalar/enum-token prop values — to named, explicitly-typed constants in a component's own configuration files (`<name>.const.ts` for Grid/layout and scalar props, `<name>.animations.ts` / `<name>.styles.ts` for motion — see each section below for exactly which).
 
 **What counts as configuration, not content:** a configuration literal shapes _how_ a rendered element behaves or is laid out — a breakpoint object, an animation curve, a heading level. It is a different axis from the _content_ a component renders — copy, images, hrefs, lists of real data — which is covered by [§8.4](./AGENTS.md#84--demo-and-fixture-content-extraction) and [§15.3](./AGENTS.md#153--extracting-demo-and-fixture-data-to-a-dedicated-module) and is out of scope here. A prop passed a component reference rather than a literal (e.g. `component={m.div}`, pointing at an imported value) is exempt from every rule below too — there is no literal there to name.
 
@@ -153,7 +153,7 @@ A value doesn't have to be multi-field to qualify: a single hardcoded string, nu
 
 **Why extract a single value at all, if it's only used once?** Naming it in `<name>.const.ts` makes every tunable setting for the component visible in one place, and it means the constant can later become a real, caller-overridable prop (with the extracted constant demoted to just its default value) without a rename.
 
-This is not about `children` or any other content prop already governed by [§8.4](./AGENTS.md#84--demo-and-fixture-content-extraction) / [§15.3](./AGENTS.md#153--extracting-demo-and-fixture-data-to-a-dedicated-module) — copy, images, hrefs, and lists of real data are a different axis (what to show) from configuration (how a rendered element is set up).
+This is not about `children` or any other content prop — see "What counts as configuration, not content" above for that boundary.
 
 ---
 
@@ -161,7 +161,7 @@ This is not about `children` or any other content prop already governed by [§8.
 
 > The baseline rule is in [AGENTS.md §16](./AGENTS.md#16-component-configuration-conventions).
 
-Every constant extracted under any of the three sections above must carry an **explicit type annotation** naming the exact prop type it configures — never left to bare inference, even when the right-hand side is a call whose own return type already happens to match:
+Every constant extracted under any of the three sections above — regardless of which file it lands in (`<name>.const.ts`, `<name>.animations.ts`, or `<name>.styles.ts`) — must carry an **explicit type annotation** naming the exact prop type it configures — never left to bare inference, even when the right-hand side is a call whose own return type already happens to match:
 
 ```ts
 // ✅ explicit — the annotation names the exact prop type
@@ -173,11 +173,13 @@ const HERO_ENTRANCE_VARIANTS = fadeInFrom('bottom', { distance: 24 });
 
 **Why this matters, in all three cases:**
 
-1. **Inference alone only checks the value against the real prop type at its JSX usage site.** A copy-paste into the wrong prop, or a shape that's valid TypeScript but wrong for this specific prop, still typechecks at the `.const.ts` declaration and only surfaces — if at all — somewhere else in the file. An explicit annotation catches the mismatch at the declaration itself.
-2. **The constant becomes self-documenting.** A reader of `.const.ts` alone, without cross-referencing the component's JSX, can already see which prop's shape this value has to satisfy.
+1. **Inference alone only checks the value against the real prop type at its JSX usage site.** A copy-paste into the wrong prop, or a shape that's valid TypeScript but wrong for this specific prop, still typechecks at the declaration and only surfaces — if at all — somewhere else in the file. An explicit annotation catches the mismatch at the declaration itself.
+2. **The constant becomes self-documenting.** A reader of the configuration file alone, without cross-referencing the component's JSX, can already see which prop's shape this value has to satisfy.
 3. **A future editor shouldn't have to trace a helper function's own return type to learn what shape they're allowed to produce.** A call like `fadeInFrom(...)` returning the right type today is an implementation detail of that call, not something the next person editing the constant should need to go verify — the file's own annotation is the one place that answer lives, consistently, for every constant in it.
 
-Name each extracted constant in `SCREAMING_SNAKE_CASE`, per the existing constant-casing convention ([§7.3](./AGENTS.md#73--casing-rules)) — this applies to every constant covered by this guide the same way it already applies to every other exported constant in `<name>.const.ts`.
+**Factory functions carry the annotation on their parameter, not a separate return-type or variable annotation.** The `MotionValue`-based `style` factory above (`parallaxYStyle`) is exempt from adding a redundant variable-level type: `(y: MotionValue<number>) => ({ y })` already names the exact type the factory accepts on its parameter, which is what determines the shape of the object it returns. There is no separate literal value being declared to annotate the way there is for `HERO_ENTRANCE_VARIANTS` above — the parameter's own type is the explicit annotation this rule asks for.
+
+Name each extracted constant in `SCREAMING_SNAKE_CASE`, per the existing constant-casing convention ([§7.3](./AGENTS.md#73--casing-rules)) — this applies to every constant covered by this guide the same way it already applies to every other exported constant, regardless of which of the three configuration files it lives in.
 
 ---
 

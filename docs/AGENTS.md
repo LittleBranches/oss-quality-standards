@@ -910,7 +910,7 @@ Full guide: `docs/component-refactor-conventions.md`
 
 ## 16. Component Configuration Conventions
 
-Applies to any inline configuration literal — a value that shapes how a rendered element behaves or is laid out, not what content it shows — left directly in JSX instead of extracted to a named constant in the component's own `<name>.const.ts`. Covers three shapes: Grid/layout literals, motion `variants`/`animate`/`transition`/`style` objects, and single scalar/enum-token prop values. This is a distinct topic from §15's decomposition/sequencing/data-sourcing focus, and from §8.4/§15.3's content-sourcing rules — content (copy, images, hrefs, lists of real data) is a different axis from configuration (how a rendered element is set up).
+Applies to any inline configuration literal — a value that shapes how a rendered element behaves or is laid out, not what content it shows — left directly in JSX instead of extracted to a named, explicitly-typed constant in the component's own configuration files. Covers three shapes: Grid/layout literals (→ `<name>.const.ts`), motion `variants`/`animate`/`transition` objects (→ `<name>.animations.ts`) and `style` objects (→ `<name>.styles.ts`), and single scalar/enum-token prop values (→ `<name>.const.ts`). This is a distinct topic from §15's decomposition/sequencing/data-sourcing focus, and from §8.4/§15.3's content-sourcing rules — content (copy, images, hrefs, lists of real data) is a different axis from configuration (how a rendered element is set up).
 
 ### 16.1 — Grid and layout literal extraction
 
