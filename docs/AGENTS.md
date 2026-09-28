@@ -580,11 +580,13 @@ For the complete front-end security checklist, consult:
 
 ### 7.1 — The 4-criterion test
 
-Before naming a component: (1) is the name a noun describing what it renders? (2) does it include the MUI base it extends? (3) is the suffix the most specific one that fits? (4) does it avoid a generic prefix (`Base*`, `Custom*`, `Common*`, etc.)?
+Before naming a component: (1) is the name a noun describing what it renders? (2) does it include the MUI base it extends? (Skip if it has none, e.g. `HeroSection`, `PricingSubsection`, `PricingSectionIntro`.) (3) is the suffix the most specific one that fits? (4) does it avoid a generic prefix (`Base*`, `Custom*`, `Common*`, etc.)?
 
 ### 7.2 — Suffix vocabulary
 
 `Card`, `Row`, `List`, `Table`, `Section`, `Subsection`, `Intro`, `Layout`, `Label`, `Sheet`, `Strip`, `Dialog`, `Drawer`, `Form`, `Field`, `Icon`, `Avatar`, `Chip`, `Tab`. Adding a new suffix requires a team decision.
+
+This list mirrors the suffix table in [`docs/naming-conventions.md`](./naming-conventions.md#suffix-vocabulary), which gives each suffix's meaning and examples. `npm run check:verify` fails if the two lists differ, so keep the paragraph above a plain list of backticked suffixes.
 
 ### 7.3 — Casing rules
 
