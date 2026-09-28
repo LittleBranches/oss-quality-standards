@@ -15,7 +15,7 @@ sidebar_position: 8
 Before settling on a name, apply all four questions:
 
 1. **Does the name describe what it renders, not what it does?** Components are nouns, not verbs. `MetricCard` ✅ — `ShowMetric` ❌.
-2. **Does the name include the MUI base component it extends?** A card that shows a metric is a `MetricCard`, not a `Metric`.
+2. **Does the name include the MUI base component it extends?** A card that shows a metric is a `MetricCard`, not a `Metric`. Skip this question for components with no MUI base, such as `HeroSection`, `PricingSubsection` and `PricingSectionIntro`: their suffix comes from the [suffix vocabulary](#suffix-vocabulary).
 3. **Is the suffix the most specific one that fits?** Prefer `Row` over `Strip` when the element is a true horizontal sequence. Prefer `Card` over `Surface`.
 4. **Does it avoid a generic prefix?** Prohibited prefixes: `Base*`, `Custom*`, `Common*`, `Generic*`, `My*`, `New*`, `Advanced*`. These describe nothing — find the specific noun instead (`CardShell` not `BaseCard`, `StatCard` not `CustomCard`).
 
@@ -37,7 +37,7 @@ If any answer is "no", revise the name before writing a single line of code. Nam
 | `Layout`     | A structural wrapper with no visible appearance                   | `PageLayout`, `SidebarLayout`                   |
 | `Label`      | A small inline element that annotates another element             | `StatusLabel`, `BadgeLabel`                     |
 | `Sheet`      | A panel or drawer-like surface anchored to an edge                | `FilterSheet`, `DetailSheet`                    |
-| `Strip`      | A thin, full-width horizontal band (less structured than a `Row`) | `AnnouncementStrip`, `PromoBanner`              |
+| `Strip`      | A thin, full-width horizontal band (less structured than a `Row`) | `AnnouncementStrip`, `PromoStrip`               |
 | `Dialog`     | A modal overlay requiring user action                             | `ConfirmDialog`, `UploadDialog`                 |
 | `Drawer`     | A slide-in panel (non-modal or modal)                             | `NavigationDrawer`, `CartDrawer`                |
 | `Form`       | A grouping of form controls with submit logic                     | `LoginForm`, `ProfileForm`                      |
@@ -48,6 +48,8 @@ If any answer is "no", revise the name before writing a single line of code. Nam
 | `Tab`        | A single tab in a `Tabs` group                                    | `DashboardTab`, `SettingsTab`                   |
 
 Adding a new suffix requires a team decision — do not introduce ad-hoc suffixes. When in doubt, pick the closest existing one.
+
+[AGENTS.md §7.2](./AGENTS.md#72--suffix-vocabulary) repeats this list so that AGENTS.md can be loaded on its own. Update both when a suffix is added or removed; `npm run check:verify` fails if they differ.
 
 ---
 
@@ -73,7 +75,7 @@ sections/hero/hero-section/               → HeroSection
 sections/testimonials/testimonials-section/ → TestimonialsSection
 ```
 
-Exception: helper components that are not standalone sections use a more specific suffix (`HeroButtonsRow`, `HeroTagline`).
+Exception: helper components that are not standalone sections use a more specific suffix from the vocabulary (`HeroButtonsRow`, `HeroFeatureList`).
 
 A section built from repeated parts uses `Subsection` for each nested part and `Intro` for the introductory block at the start of a section or subsection (`PricingSubsection`, `PricingSectionIntro`). Neither is a standalone, full-width section, so neither uses the `Section` suffix.
 
