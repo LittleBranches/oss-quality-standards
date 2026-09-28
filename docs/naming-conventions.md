@@ -25,25 +25,27 @@ If any answer is "no", revise the name before writing a single line of code. Nam
 
 ## Suffix vocabulary
 
-| Suffix    | What it signals                                                   | Example                              |
-| --------- | ----------------------------------------------------------------- | ------------------------------------ |
-| `Card`    | A contained surface with elevation and a defined content region   | `MetricCard`, `AvatarCard`           |
-| `Row`     | A horizontal sequence of related items                            | `HeroButtonsRow`, `ActionRow`        |
-| `List`    | A vertical sequence with implicit ordering or repetition          | `FeatureList`, `NotificationList`    |
-| `Table`   | Columnar data with headers                                        | `PricingTable`, `ComparisonTable`    |
-| `Section` | A full-width, self-contained page section                         | `HeroSection`, `TestimonialsSection` |
-| `Layout`  | A structural wrapper with no visible appearance                   | `PageLayout`, `SidebarLayout`        |
-| `Label`   | A small inline element that annotates another element             | `StatusLabel`, `BadgeLabel`          |
-| `Sheet`   | A panel or drawer-like surface anchored to an edge                | `FilterSheet`, `DetailSheet`         |
-| `Strip`   | A thin, full-width horizontal band (less structured than a `Row`) | `AnnouncementStrip`, `PromoBanner`   |
-| `Dialog`  | A modal overlay requiring user action                             | `ConfirmDialog`, `UploadDialog`      |
-| `Drawer`  | A slide-in panel (non-modal or modal)                             | `NavigationDrawer`, `CartDrawer`     |
-| `Form`    | A grouping of form controls with submit logic                     | `LoginForm`, `ProfileForm`           |
-| `Field`   | A single form control + label + error                             | `EmailField`, `PasswordField`        |
-| `Icon`    | An SVG icon wrapper                                               | `HomeIcon`, `ChevronIcon`            |
-| `Avatar`  | A circular user or entity representation                          | `UserAvatar`, `TeamAvatar`           |
-| `Chip`    | A small, pill-shaped label with optional action                   | `TagChip`, `FilterChip`              |
-| `Tab`     | A single tab in a `Tabs` group                                    | `DashboardTab`, `SettingsTab`        |
+| Suffix       | What it signals                                                   | Example                                         |
+| ------------ | ----------------------------------------------------------------- | ----------------------------------------------- |
+| `Card`       | A contained surface with elevation and a defined content region   | `MetricCard`, `AvatarCard`                      |
+| `Row`        | A horizontal sequence of related items                            | `HeroButtonsRow`, `ActionRow`                   |
+| `List`       | A vertical sequence with implicit ordering or repetition          | `FeatureList`, `NotificationList`               |
+| `Table`      | Columnar data with headers                                        | `PricingTable`, `ComparisonTable`               |
+| `Section`    | A full-width, self-contained page section                         | `HeroSection`, `TestimonialsSection`            |
+| `Subsection` | A nested section inside a `Section`                               | `PricingSubsection`, `FeatureSubsection`        |
+| `Intro`      | An introductory block at the start of a `Section` or `Subsection` | `PricingSectionIntro`, `FeatureSubsectionIntro` |
+| `Layout`     | A structural wrapper with no visible appearance                   | `PageLayout`, `SidebarLayout`                   |
+| `Label`      | A small inline element that annotates another element             | `StatusLabel`, `BadgeLabel`                     |
+| `Sheet`      | A panel or drawer-like surface anchored to an edge                | `FilterSheet`, `DetailSheet`                    |
+| `Strip`      | A thin, full-width horizontal band (less structured than a `Row`) | `AnnouncementStrip`, `PromoBanner`              |
+| `Dialog`     | A modal overlay requiring user action                             | `ConfirmDialog`, `UploadDialog`                 |
+| `Drawer`     | A slide-in panel (non-modal or modal)                             | `NavigationDrawer`, `CartDrawer`                |
+| `Form`       | A grouping of form controls with submit logic                     | `LoginForm`, `ProfileForm`                      |
+| `Field`      | A single form control + label + error                             | `EmailField`, `PasswordField`                   |
+| `Icon`       | An SVG icon wrapper                                               | `HomeIcon`, `ChevronIcon`                       |
+| `Avatar`     | A circular user or entity representation                          | `UserAvatar`, `TeamAvatar`                      |
+| `Chip`       | A small, pill-shaped label with optional action                   | `TagChip`, `FilterChip`                         |
+| `Tab`        | A single tab in a `Tabs` group                                    | `DashboardTab`, `SettingsTab`                   |
 
 Adding a new suffix requires a team decision — do not introduce ad-hoc suffixes. When in doubt, pick the closest existing one.
 
@@ -72,6 +74,8 @@ sections/testimonials/testimonials-section/ → TestimonialsSection
 ```
 
 Exception: helper components that are not standalone sections use a more specific suffix (`HeroButtonsRow`, `HeroTagline`).
+
+A section built from repeated parts uses `Subsection` for each nested part and `Intro` for the introductory block at the start of a section or subsection (`PricingSubsection`, `PricingSectionIntro`). Neither is a standalone, full-width section, so neither uses the `Section` suffix.
 
 ### `icons/` components
 

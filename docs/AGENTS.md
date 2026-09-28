@@ -584,7 +584,7 @@ Before naming a component: (1) is the name a noun describing what it renders? (2
 
 ### 7.2 — Suffix vocabulary
 
-`Card`, `Row`, `List`, `Table`, `Section`, `Layout`, `Label`, `Sheet`, `Strip`, `Dialog`, `Drawer`, `Form`, `Field`, `Icon`, `Avatar`, `Chip`, `Tab`. Adding a new suffix requires a team decision.
+`Card`, `Row`, `List`, `Table`, `Section`, `Subsection`, `Intro`, `Layout`, `Label`, `Sheet`, `Strip`, `Dialog`, `Drawer`, `Form`, `Field`, `Icon`, `Avatar`, `Chip`, `Tab`. Adding a new suffix requires a team decision.
 
 ### 7.3 — Casing rules
 
