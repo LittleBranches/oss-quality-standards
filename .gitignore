@@ -25,3 +25,6 @@ yarn-error.log*
 
 # Local-only safety net (see file header) — never committed, CI has no access to it
 .banned-patterns.local
+
+# Per-machine config naming the repo that tracks issues — never committed
+.issue-tracker-config.json
