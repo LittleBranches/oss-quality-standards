@@ -31,7 +31,7 @@ import path from 'path';
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
-/** Maximum changed files before targeted tests fall back to the full suite. */
+/** Maximum changed files that bear on tests (not matching the skip-only list) before targeted tests fall back to the full suite. */
 export const FULL_FILE_THRESHOLD = 25;
 
 /** File patterns that trigger the tsup build step. */
@@ -162,11 +162,14 @@ export function evaluateTriggers(
   const anyStory = files.some((f) => storyTrigger.some((p) => p.test(f)));
   const onlyNonTest = files.every((f) => testSkipOnly.some((p) => p.test(f)));
   const anySrc = files.some((f) => f.startsWith('src/'));
+  // Only files that can bear on tests count towards the threshold: a branch that adds a component also adds its
+  // README, roadmap, changeset and docs, and those must not push it over into the full suite.
+  const testRelevantCount = files.filter((f) => !testSkipOnly.some((p) => p.test(f))).length;
 
   let tests: 'all' | 'targeted' | 'none';
   if (onlyNonTest) {
     tests = 'none';
-  } else if (files.length > threshold) {
+  } else if (testRelevantCount > threshold) {
     tests = 'all';
   } else if (!anySrc) {
     // No src/ files changed — resolveTargetedTests would return [].
